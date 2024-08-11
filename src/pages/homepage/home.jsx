@@ -1,0 +1,31 @@
+import React from 'react';
+import "./home.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Container, Row, Col } from 'react-bootstrap';
+
+const HomePage = () => {
+  const handleStartClick = () => {
+    alert("시작하기 버튼이 클릭되었습니다!");
+  };
+
+  return (
+    <div className="home">
+      <Container className="d-flex align-items-center justify-content-center min-vh-100">
+        <Row className="text-center">
+          <Col style={{ fontFamily: '궁서, serif'}}>
+            <h1 className="main-title fw-bold">
+              대전 여행  <br />
+              준비 되셨나유? <br />
+              그럼 <span className="text-warning">이대로 가유~</span>
+            </h1>
+            <Button className="start-button fw-bold btn-lg mt-4 rounded-pill" onClick={handleStartClick}>
+              시작하기
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default HomePage;
