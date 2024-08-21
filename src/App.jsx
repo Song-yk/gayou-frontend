@@ -7,7 +7,7 @@ const Home = lazy(() => import('./pages/homepage/home')); // 파일 경로와 �
 const Region = lazy(() => import('./pages/optionspage/region'));
 const Extra = lazy(() => import('./pages/optionspage/extra'));
 const Concept = lazy(() => import('./pages/optionspage/concept'));
-const RouteCreate = lazy(() => import('./pages/aipage/aiRouteCreator'));
+const RouteCreate = lazy(() => import('./pages/routepage/routeCreator'));
 
 function App() {
   return (
