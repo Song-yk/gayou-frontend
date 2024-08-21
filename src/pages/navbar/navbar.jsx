@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
             <div className="navbar">
                 <div className="container d-flex align-items-center justify-content-end">
-                    <Button className="fw-bold btn-lg mt-4 rounded-pill btn-light"  
+                    <Button className="fw-bold btn-lg m-4 rounded-pill btn-light"  
                     style={{ border: '1px solid black'}}
                     href="/login">
                         로그인 및 회원가입
