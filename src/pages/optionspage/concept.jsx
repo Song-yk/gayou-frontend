@@ -7,7 +7,7 @@ const Concept = () => {
   const navigate = useNavigate();
 
   const handleNextClick = () => {
-    navigate('/routeCreator')
+    navigate('/routeCreator');
   };
 
   return (
@@ -20,9 +20,11 @@ const Concept = () => {
               마지막이에유. <br />
               원하는 컨셉을 골라주세유. <br />
             </h1>
-            <Button className="start-button fw-bold btn-lg mt-4 rounded-pill btn-warning" 
-             style={{ border: '1px solid black'}}
-             onClick={handleNextClick}>
+            <Button
+              className="start-button fw-bold btn-lg mt-4 rounded-pill btn-warning"
+              style={{ border: '1px solid black' }}
+              onClick={handleNextClick}
+            >
               다음
             </Button>
           </Col>

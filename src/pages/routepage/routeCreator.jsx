@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import Navbar from '../navbar/navbar.jsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import KakaoMap from '../../forms/kakaoMap.jsx';
-import MyCardControls from '../../forms/MyCardControls.jsx';
+import KakaoMap from '../../components/common/kakaoMap.jsx';
+import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
-import MyButtonField from '../../forms/MyButtonField.jsx';
+import MyButtonField from '../../components/common/MyButtonField.jsx';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
@@ -19,7 +17,7 @@ const RouteCreator = () => {
   const { control } = useForm();
 
   const GetData = async () => {
-    const response = await axios.get('api/route/locations');
+    const response = await axios.get('/api/route/locations');
     setMyData(response.data);
     setLoading(false);
 
