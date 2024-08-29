@@ -21,7 +21,7 @@ const theme = createTheme({
 });
 
 export default function MyButtonField(props) {
-  const { width, color, name, control, value } = props;
+  const { width, color, name, control, value, onClick } = props;
   return (
     <Controller
       name={name}
@@ -39,6 +39,7 @@ export default function MyButtonField(props) {
             }}
             color={color}
             variant="contained"
+            onClick={onClick}
           >
             {value}
           </Button>

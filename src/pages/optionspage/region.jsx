@@ -4,15 +4,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-
-
 const Region = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-    
-    const handleNextClick = () => {
-    navigate('/extra');  
-};
+  const handleNextClick = () => {
+    navigate('/extra');
+  };
 
   return (
     <div className="options">
@@ -23,15 +20,16 @@ const Region = () => {
             <h1 className="main-title fw-bold">
               어디가세유? <br />
             </h1>
-            <Button className="start-button fw-bold btn-lg mt-4 rounded-pill btn-warning" 
-             style={{ border: '1px solid black'}}
-             onClick={handleNextClick}>
+            <Button
+              className="start-button fw-bold btn-lg mt-4 rounded-pill btn-warning"
+              style={{ border: '1px solid black' }}
+              onClick={handleNextClick}
+            >
               다음
             </Button>
           </Col>
         </Row>
       </Container>
-      
     </div>
   );
 };

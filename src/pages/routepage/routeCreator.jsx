@@ -1,25 +1,24 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import Navbar from '../navbar/navbar.jsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import KakaoMap from '../../forms/kakaoMap.jsx';
-import MyCardControls from '../../forms/MyCardControls.jsx';
+import KakaoMap from '../../components/common/kakaoMap.jsx';
+import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
-import MyButtonField from '../../forms/MyButtonField.jsx';
+import MyButtonField from '../../components/common/MyButtonField.jsx';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 const RouteCreator = () => {
-  const [locations, setLocations] = useState([]);
+  const [myData, setMyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mapHeight, setMapHeight] = useState('500px');
+  const [editMode, setEditMode] = useState(false);
 
   const { control } = useForm();
 
   const GetData = async () => {
-    const response = await axios.get('api/route/locations');
-    setLocations(response.data);
+    const response = await axios.get('/api/route/locations');
+    setMyData(response.data);
     setLoading(false);
 
     if (response.data.length > 0) {
@@ -36,9 +35,33 @@ const RouteCreator = () => {
     transition: 'all 0.2s ease',
   }));
 
+  const moveCardUp = idx => {
+    if (idx > 0) {
+      const newItems = [...myData.items];
+      [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
+      setMyData(prevData => ({ ...prevData, items: newItems }));
+    }
+  };
+
+  const moveCardDown = idx => {
+    if (idx < myData.items.length - 1) {
+      const newItems = [...myData.items];
+      [newItems[idx], newItems[idx + 1]] = [newItems[idx + 1], newItems[idx]];
+      setMyData(prevData => ({ ...prevData, items: newItems }));
+    }
+  };
+
+  const removeCard = idx => {
+    const newItems = myData.items.filter((_, cardIdx) => cardIdx !== idx);
+    setMyData(prevData => ({ ...prevData, items: newItems }));
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  };
+
   return (
     <div className="options">
-      <Navbar />
       <div style={{ textAlign: '-webkit-center' }}>
         {loading ? (
           <div>
@@ -47,11 +70,13 @@ const RouteCreator = () => {
               AI 동네투어를 생성중이에유. <br />
             </h1>
           </div>
-        ) : locations.length > 0 ? (
+        ) : myData.items.length > 0 ? (
           <Box sx={{ width: '80%' }}>
             <Grid container spacing={3}>
               <AnimatedGridItem item xs={12}>
-                <h1 style={{ textAlign: 'left' }}>오늘의 동네는 OOO입니다.</h1>
+                <h1 style={{ textAlign: 'left' }}>
+                  오늘의 동네는 {myData.town}입니다.
+                </h1>
               </AnimatedGridItem>
               <AnimatedGridItem
                 item
@@ -79,7 +104,7 @@ const RouteCreator = () => {
                   }}
                 >
                   <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>
-                    계족산에서 힐링 한 바가지 두 바가지
+                    {myData.courseTite}
                   </h5>
                 </Box>
                 <Box>
@@ -97,7 +122,7 @@ const RouteCreator = () => {
                     overflow: 'auto',
                   }}
                 >
-                  {locations.map((location, index) => (
+                  {myData.items.map((location, index) => (
                     <MyCardControls
                       key={index}
                       width="100%"
@@ -105,6 +130,12 @@ const RouteCreator = () => {
                       alt={location.title}
                       title={location.title}
                       description={location.title}
+                      idx={index}
+                      totalItems={myData.items.length}
+                      moveCardUp={() => moveCardUp(index)}
+                      moveCardDown={() => moveCardDown(index)}
+                      removeCard={() => removeCard(index)}
+                      showIcons={editMode}
                     />
                   ))}
                 </Box>
@@ -115,6 +146,7 @@ const RouteCreator = () => {
                     control={control}
                     color="rosePink"
                     value="일정 편집하기"
+                    onClick={toggleEditMode}
                   />
                 </Box>
               </AnimatedGridItem>
@@ -131,7 +163,7 @@ const RouteCreator = () => {
                   <KakaoMap
                     name="location"
                     control={control}
-                    center={locations}
+                    center={myData.items}
                     height={mapHeight}
                   />
                 </Box>
@@ -158,7 +190,7 @@ const RouteCreator = () => {
           </Box>
         ) : (
           <div>
-            <h1 className="main-title fw-bold">No locations found.</h1>
+            <h1 className="main-title fw-bold">No myData found.</h1>
           </div>
         )}
       </div>
