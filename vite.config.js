@@ -8,10 +8,15 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: "http://localhost:8080",
+      '/api/springboot': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: path => path.replace(/^\/api\/springboot/, ''),
+      },
+      '/api/flask': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api\/flask/, ''),
       },
     },
   },
