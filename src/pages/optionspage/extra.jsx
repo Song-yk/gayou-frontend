@@ -11,23 +11,27 @@ const Extra = () => {
   const navigate = useNavigate();
   const [age, setAge] = useState(25);
   const [gender, setGender] = useState('남성');
+  const [transport, setTransport] = useState('대중교통');
   const [travelDate, setTravelDate] = useState(new Date());
-  const [isLocal, setIsLocal] = useState(false);  // 초기값을 false로 변경
-  const { region } = location.state || {};
+  const [isLocal, setIsLocal] = useState(false);
+  const { region, neighborhoods } = location.state || {};
 
 
   const handleNextClick = () => {
 
-    console.log(region, age, gender, travelDate, isLocal);
-    navigate('/concept', { state: { region, age, gender, travelDate, isLocal } });
+    //console.log(region, age, gender, travelDate, isLocal, transport);
+    navigate('/concept', { state: { region, neighborhoods, age, gender, travelDate, isLocal, transport } });
   };
 
+  const handleBeforeClick = () => {
+    navigate(-1);
+  };
   return (
     <div className="options">
       <Navbar />
       <Container className="min-vh-100 d-flex flex-column justify-content-start">
         <Row className="mb-5">
-          <Col md={5} className="d-flex flex-column justify-content-start">
+          <Col md={5} className="d-flex flex-column justify-content-start mt-5">
             <h1 className="fw-bold" style={{ fontSize: '90px' }}>
               조금 더<br />
               알려주세유.
@@ -98,8 +102,37 @@ const Extra = () => {
                     </div>
                 </Col>
                 </Row>
+                <Row className="mb-4">
+                <Col md ={6}>
+                    <div className="mb-4">
+                    <h4>이동 수단을 알려주세요.</h4>
+                    <hr/>
+                    <Button
+                        variant={transport === '대중교통' ? 'warning' : 'light'}
+                        onClick={() => setTransport('대중교통')}
+                        className="m-1"
+                    >
+                        대중교통
+                    </Button>
+                    <Button
+                        variant={transport === '자가용' ? 'warning' : 'light'}
+                        onClick={() => setTransport('자가용')}
+                        className="m-1"
+                    >
+                        자가용
+                    </Button>
+                    </div>
+                </Col>
+                </Row>
                 <Row className="m-auto">
                     <Col className="text-end">
+                        <Button
+                          className="fw-bold btn-lg m-1"
+                          style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
+                          onClick={handleBeforeClick}
+                          >
+                          이전
+                        </Button>
                         <Button
                         className="fw-bold btn-lg"
                         style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}

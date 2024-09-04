@@ -9,7 +9,7 @@ const Concept = () => {
   const navigate = useNavigate();
   const [selectedConcepts, setSelectedConcepts] = useState([]);
   
-  const { region, age, gender, travelDate, isLocal } = location.state || {};
+  const { region, neighborhoods, age, gender, travelDate, isLocal, transport } = location.state || {};
   
   const concepts = ['빵지순례', '지역 축제', '예술/공연', '자연', '스포츠', '로컬맛집', '동네 탐험', '감성 카페', '쇼핑', '아이/반려동물'];
 
@@ -22,10 +22,13 @@ const Concept = () => {
   };
 
   const handleNextClick = () => {
-    console.log(region, age, gender, travelDate, isLocal,selectedConcepts);
-    navigate('/routeCreator', { state: { region, age, gender, travelDate, isLocal, selectedConcepts } });
+    console.log(region, neighborhoods, age, gender, travelDate, isLocal,selectedConcepts);
+    navigate('/routeCreator', { state: { region, neighborhoods, age, gender, travelDate, isLocal, transport, selectedConcepts } });
   };
 
+  const handleBeforeClick = () => {
+    navigate(-1);
+  };
   return (
     <div className="options">
       <Navbar />
@@ -52,6 +55,13 @@ const Concept = () => {
                 </Button>
               ))}
             </div>
+            <Button
+              className="fw-bold btn-lg m-1"
+              style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
+              onClick={handleBeforeClick}
+              >
+              이전
+            </Button>
             <Button
               className="fw-bold btn-lg"
               style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
