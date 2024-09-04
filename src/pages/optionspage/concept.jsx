@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '../navbar/navbar.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -31,7 +30,6 @@ const Concept = () => {
   };
   return (
     <div className="options">
-      <Navbar />
       <Container className="min-vh-100 d-flex flex-column justify-content-start">
         <Row className="mb-5">
           <Col className="d-flex flex-column justify-content-center">

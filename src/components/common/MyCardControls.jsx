@@ -14,7 +14,7 @@ export default function MyCardControls(props) {
     image,
     alt,
     title,
-    description,
+    overview,
     idx,
     totalItems,
     moveCardUp,
@@ -43,7 +43,7 @@ export default function MyCardControls(props) {
             color="text.secondary"
             component="div"
           >
-            {description}
+            {overview}
           </Typography>
         </CardContent>
         {showIcons && (
