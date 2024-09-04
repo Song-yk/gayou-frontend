@@ -22,7 +22,7 @@ const RouteCreate = () => {
       selectedConcepts,
     };
 
-    axios.post('/api/springboot/route', requestData, {
+    axios.post('/api/flask/route/locations', requestData, {
       headers: {
         'Content-Type': 'application/json', 
       },
