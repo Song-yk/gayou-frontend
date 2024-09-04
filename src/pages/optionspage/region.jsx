@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col, FormControl, InputGroup, ListGroup } from 'react-bootstrap';
-import Navbar from '../navbar/navbar.jsx';
 //import { BsSearch } from 'react-icons/bs';
 
 
@@ -134,7 +133,6 @@ const Region = () => {
 
     return (
         <div className="options">
-            <Navbar />
             <Container className="min-vh-100 d-flex flex-column justify-content-center">
                 <Row className="mb-5">
                     <Col md={5} className="d-flex flex-column justify-content-start mt-5">

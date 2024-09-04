@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'; 
-import Navbar from '../navbar/navbar.jsx';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -38,7 +37,6 @@ const RouteCreate = () => {
 
   return (
     <div className="options">
-      <Navbar />
       <Container className="d-flex align-items-center justify-content-center min-vh-100">
         <Row className="text-center">
           <Col>
