@@ -42,7 +42,6 @@ const HomePage = () => {
 
   return (
     <div className="home">
-      <Navbar />
       <Container className="align-items-center min-vh-100">
         <Row className="text-center">
           <Col>

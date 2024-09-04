@@ -16,7 +16,6 @@ const HomePage = () => {
   const eximg = 'https://github.com/user-attachments/assets/27b21286-b516-4c41-aacd-1f4148cb9b18';
   return (
     <div className="home">
-      <Navbar />
       <Container className="align-items-center min-vh-100">
         
         <Row className="text-center">

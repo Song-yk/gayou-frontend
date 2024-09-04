@@ -32,11 +32,12 @@ function App() {
             <Route path="extra" element={<Extra />} />
             <Route path="concept" element={<Concept />} />
             <Route path="routeCreator" element={<RouteCreate />} />
-            <Route path="myPage" element={<MyPageLayout />}>
-              <Route path="createpost" element={<Createpost />} />
+            <Route path="createpost" element={<Createpost />} />
               <Route path="postlist" element={<Postlist />} />
               <Route path="updatepost" element={<Updatepost />} />
               <Route path="viewpost" element={<Viewpost />} />
+            <Route path="myPage" element={<MyPageLayout />}>
+              
               <Route path="" element={<MyCourse />} />
               <Route path="myCourse" element={<MyCourse />} />
             </Route>
