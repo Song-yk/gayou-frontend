@@ -1,7 +1,16 @@
 import React from 'react';
 import './signup.css'; // CSS 파일을 가져옵니다.
 
-function signup() {
+import { useNavigate } from 'react-router-dom';
+
+
+const signup = () => {
+  const navigate = useNavigate();
+
+  const goRegist = () => {
+    navigate('/agree')
+
+  }
   return (
     <div className="signup-container">
       <h1>
@@ -16,7 +25,7 @@ function signup() {
           <img src="kakao-icon.png" alt="Kakao" />
           카카오로 3초만에 시작하기
         </button>
-        <button className="email-button">
+        <button className="email-button" onClick={goRegist}>
           <img src="email-icon.png" alt="Email" />
           이메일로 가입하기
         </button>
@@ -28,6 +37,7 @@ function signup() {
         <img src="google-icon.png" alt="Google" />
       </button>
     </div>
+    
   );
 }
 
