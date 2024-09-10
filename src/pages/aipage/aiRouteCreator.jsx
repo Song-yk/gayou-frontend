@@ -1,18 +1,42 @@
-import React from 'react';
-import Navbar from '../navbar/navbar.jsx';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Container, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios'; 
+
 const RouteCreate = () => {
+  const location = useLocation(); 
   const navigate = useNavigate();
 
-  const handleNextClick = () => {
-    navigate('/routeCreator')
-  };
+  const { region, neighborhoods, age, gender, travelDate, isLocal, transport, selectedConcepts } = location.state || {};
+
+  useEffect(() => {
+    const requestData = {
+      region,
+      neighborhoods,
+      age,
+      gender,
+      travelDate,
+      isLocal,
+      transport,
+      selectedConcepts,
+    };
+
+    axios.post('/api/flask/route/locations', requestData, {
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+    })
+      .then(response => {
+        console.log('성공!!');
+      })
+      .catch(error => {
+        console.error("오류:", error);
+      });
+  }, []); 
 
   return (
     <div className="options">
-      <Navbar />
       <Container className="d-flex align-items-center justify-content-center min-vh-100">
         <Row className="text-center">
           <Col>

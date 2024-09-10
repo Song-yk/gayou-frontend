@@ -9,7 +9,7 @@ const Home = lazy(() => import('./pages/homepage/home'));
 const Region = lazy(() => import('./pages/optionspage/region'));
 const Extra = lazy(() => import('./pages/optionspage/extra'));
 const Concept = lazy(() => import('./pages/optionspage/concept'));
-const RouteCreate = lazy(() => import('./pages/routepage/routeCreator'));
+const RouteCreate = lazy(() => import('./pages/aipage/aiRouteCreator')); //./pages/aipage/aiRouteCreator
 const MyPageLayout = lazy(() => import('./components/layout/myPageLayout'));
 const Login = lazy(() => import('./pages/loginpage/login'));
 const Signup = lazy(() => import('./pages/loginpage/signup'));
@@ -17,6 +17,11 @@ const Agree = lazy(() => import('./pages/loginpage/agree'));
 const Join = lazy(() => import('./pages/loginpage/join'));
 const Profile = lazy(() => import('./pages/loginpage/profile'));
 const Passwordchange = lazy(() => import('./pages/loginpage/passwordchange'));
+
+const Createpost = lazy(() => import('./pages/coursepost/createpost'));
+const Postlist = lazy(() => import('./pages/coursepost/postlist'));
+const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
+const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
 
@@ -39,7 +44,12 @@ function App() {
             <Route path="extra" element={<Extra />} />
             <Route path="concept" element={<Concept />} />
             <Route path="routeCreator" element={<RouteCreate />} />
+            <Route path="createpost" element={<Createpost />} />
+              <Route path="postlist" element={<Postlist />} />
+              <Route path="updatepost" element={<Updatepost />} />
+              <Route path="viewpost" element={<Viewpost />} />
             <Route path="myPage" element={<MyPageLayout />}>
+              
               <Route path="" element={<MyCourse />} />
               <Route path="myCourse" element={<MyCourse />} />
             </Route>
