@@ -1,24 +1,32 @@
 import React from 'react';
-import "./home.css";
+import './home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
   const handleStartClick = () => {
-    alert("시작하기 버튼이 클릭되었습니다!");
+    //alert("시작하기 버튼이 클릭되었습니다!");
+    navigate('/region');
   };
 
   return (
     <div className="home">
       <Container className="d-flex align-items-center justify-content-center min-vh-100">
         <Row className="text-center">
-          <Col style={{ fontFamily: '궁서, serif'}}>
-            <h1 className="main-title fw-bold">
-              대전 여행  <br />
+          <Col>
+            <p className="main-title fw-bold" style={{ fontSize: '70px' }}>
+              대전 여행 <br />
               준비 되셨나유? <br />
               그럼 <span className="text-warning">이대로 가유~</span>
-            </h1>
-            <Button className="start-button fw-bold btn-lg mt-4 rounded-pill" onClick={handleStartClick}>
+            </p>
+            <Button
+              className="start-button fw-bold btn-lg mt-4 rounded-pill btn-warning"
+              style={{ border: '1px solid black' }}
+              onClick={handleStartClick}
+            >
               시작하기
             </Button>
           </Col>
