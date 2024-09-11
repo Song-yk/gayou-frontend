@@ -9,7 +9,7 @@ const Home = lazy(() => import('./pages/homepage/home'));
 const Region = lazy(() => import('./pages/optionspage/region'));
 const Extra = lazy(() => import('./pages/optionspage/extra'));
 const Concept = lazy(() => import('./pages/optionspage/concept'));
-const RouteCreate = lazy(() => import('./pages/routepage/routeCreator')); //./pages/aipage/aiRouteCreator
+const RouteCreate = lazy(() => import('./pages/routepage/routeCreator'));
 const MyPageLayout = lazy(() => import('./components/layout/myPageLayout'));
 
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
