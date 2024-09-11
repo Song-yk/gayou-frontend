@@ -112,3 +112,7 @@
 .custom_zoomcontrol span:first-child {
   border-bottom: 1px solid #bfbfbf;
 }
+
+.MuiCardContent-root {
+  width: fit-content;
+}

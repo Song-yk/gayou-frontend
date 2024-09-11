@@ -192,7 +192,7 @@ function KakaoMap(props) {
           <div
             ref={mapRef}
             id="map"
-            style={{ width: width || '100%', height: height || '582px' }}
+            style={{ width: width || '100%', height: height || '670px' }}
           ></div>
           <div className="custom_typecontrol radius_border">
             <span

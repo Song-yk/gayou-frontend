@@ -12,8 +12,6 @@ const RouteCreator = () => {
   const [myData, setMyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [mapCenter, setMapCenter] = useState(null);
-  const [selectedDay, setSelectedDay] = useState('');
 
   const { control } = useForm();
 
@@ -21,10 +19,6 @@ const RouteCreator = () => {
     try {
       const response = await axios.get('/api/flask/route/locations/');
       setMyData(response.data);
-      if (response.data.data && Object.values(response.data.data).length > 0) {
-        setMapCenter(response.data.data['day1']);
-        setSelectedDay('day1');
-      }
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -74,13 +68,13 @@ const RouteCreator = () => {
     setEditMode(!editMode);
   };
 
-  function repeatRoutes(obj) {
+  function repeatRoutesSubTitle(obj) {
     return obj.map((location, index) => (
       <MyCardControls
         key={`location-${index}-${location.title}`}
         width="100%"
         image={location.firstimage}
-        alt={location.title}
+        image2={location.firstimage2}
         title={location.title}
         overview={location.overview}
         idx={index}
@@ -93,56 +87,42 @@ const RouteCreator = () => {
     ));
   }
 
-  function repeatRoutesSubTitle(obj) {
-    return Object.values(obj).map((day, index) => (
-      <React.Fragment key={`day-${index}`}>
-        <Box key={`day-${index}-box`}>
-          <h4 style={{ textAlign: 'left', fontWeight: 'bold' }}>
-            {index + 1}일차
-          </h4>
-        </Box>
-        <Box
-          key={`day-${index}-box2`}
-          sx={{
-            border: 'solid 1px',
-            borderRadius: '20px',
-            padding: '1em',
-            borderColor: '#a6a6a6',
-            height: '450px',
-            overflow: 'auto',
-          }}
-        >
-          {repeatRoutes(Object.values(day))}
-        </Box>
-      </React.Fragment>
-    ));
-  }
+  const saveCourse = async () => {
+    try {
+      myData.userId = 1;
+      const response = await axios.post(
+        '/api/springboot/route/locations',
+        myData
+      );
 
-  function createMap(obj) {
-    let app = [];
-    app.push(
-      <Box sx={{ marginBottom: '1em', float: 'left' }}>
-        {Object.values(obj).map((dayKey, index) => (
-          <MyButtonField
-            key={`dayButton-${index}`}
-            name="day"
-            control={control}
-            color={
-              selectedDay === `day${index + 1}`
-                ? 'sunsetOrangeSelected'
-                : 'sunsetOrange'
-            }
-            value={`${index + 1}일차`}
-            onClick={() => {
-              setMapCenter(myData.data[`day${index + 1}`]); // Dynamically set the center based on the day
-              setSelectedDay(`day${index + 1}`); // Update selected day
-            }}
-          />
-        ))}
-      </Box>
-    );
-    return app;
-  }
+      if (response.status === 200) {
+        console.log('Course saved successfully!');
+      } else {
+        console.log('Failed to save course.');
+      }
+    } catch (error) {
+      console.error('Error saving course:', error);
+    }
+  };
+
+  const retryRec = async () => {
+    setLoading(true);
+    try {
+      // const response = await axios.get('/api/flask/retryRec');
+      const response = await axios.get('/api/flask/route/locations/');
+
+      if (response.status === 200) {
+        setMyData(response.data);
+      } else {
+        alert('Failed to get new recommendations.');
+      }
+    } catch (error) {
+      console.error('Error getting new recommendations:', error);
+      alert('An error occurred while getting new recommendations.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="options">
@@ -188,10 +168,21 @@ const RouteCreator = () => {
                   }}
                 >
                   <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>
-                    {myData.courseTite}
+                    {myData.courseName}
                   </h5>
                 </Box>
-                {repeatRoutesSubTitle(myData.data)}
+                <Box
+                  sx={{
+                    border: 'solid 1px',
+                    borderRadius: '20px 0px 0px 20px',
+                    padding: '1em',
+                    borderColor: '#a6a6a6',
+                    height: '450px',
+                    overflow: 'auto',
+                  }}
+                >
+                  {repeatRoutesSubTitle(myData.data)}
+                </Box>
                 <Box sx={{ textAlign: 'right' }}>
                   <MyButtonField
                     width="25%"
@@ -213,11 +204,10 @@ const RouteCreator = () => {
                 xl={7}
                 xxl={7}
               >
-                {createMap(myData.data)}
                 <KakaoMap
                   name="location"
                   control={control}
-                  center={mapCenter}
+                  center={myData.data}
                 />
               </AnimatedGridItem>
               <AnimatedGridItem item xs={12} md={12}>
@@ -228,6 +218,7 @@ const RouteCreator = () => {
                     control={control}
                     color="rosePink"
                     value="코스 저장하기"
+                    onClick={saveCourse}
                   />
                   <MyButtonField
                     width="10%"
@@ -235,6 +226,7 @@ const RouteCreator = () => {
                     control={control}
                     color="sunsetOrange"
                     value="다시 추천 받기"
+                    onClick={retryRec}
                   />
                 </Box>
               </AnimatedGridItem>

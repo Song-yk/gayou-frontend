@@ -1,6 +1,5 @@
 import React from 'react';
 import './home.css';
-import Navbar from '../navbar/navbar.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,6 @@ const HomePage = () => {
 
   return (
     <div className="home">
-      <Navbar />
       <Container className="d-flex align-items-center justify-content-center min-vh-100">
         <Row className="text-center">
           <Col>
