@@ -23,6 +23,7 @@ const Postlist = lazy(() => import('./pages/coursepost/postlist'));
 const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
 const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
+const Test = lazy(() => import('./pages/myPage/test'));
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
 
 const NotFound = lazy(() => import('./pages/errors/notFoundPage'));
@@ -52,6 +53,7 @@ function App() {
               
               <Route path="" element={<MyCourse />} />
               <Route path="myCourse" element={<MyCourse />} />
+              <Route path="test" element={<Test />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
