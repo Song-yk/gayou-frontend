@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import KakaoMap from '../../components/common/kakaoMap.jsx';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
-import MyButtonField from '../../components/common/MyButtonField.jsx';
+import MyButton from '../../components/common/MyButton.jsx';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
@@ -184,7 +184,7 @@ const RouteCreator = () => {
                   {repeatRoutesSubTitle(myData.data)}
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
-                  <MyButtonField
+                  <MyButton
                     width="25%"
                     name="route"
                     control={control}
@@ -212,7 +212,7 @@ const RouteCreator = () => {
               </AnimatedGridItem>
               <AnimatedGridItem item xs={12} md={12}>
                 <Box sx={{ textAlign: 'right' }}>
-                  <MyButtonField
+                  <MyButton
                     width="10%"
                     name="route"
                     control={control}
@@ -220,7 +220,7 @@ const RouteCreator = () => {
                     value="코스 저장하기"
                     onClick={saveCourse}
                   />
-                  <MyButtonField
+                  <MyButton
                     width="10%"
                     name="route"
                     control={control}

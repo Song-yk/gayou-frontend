@@ -1,3 +1,8 @@
+.loadingTag {
+  height: 100%;
+  align-content: center;
+}
+
 .map_wrap {
   position: relative;
   overflow: hidden;
@@ -115,4 +120,26 @@
 
 .MuiCardContent-root {
   width: fit-content;
+}
+
+input::-webkit-inner-spin-button {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.authBox {
+  height: 100%;
+  align-content: center;
+}
+
+.MuiOutlinedInput-input {
+  padding: 10px !important;
+}
+.verificationEmailBtn {
+  top: 10px !important;
+}
+
+.authentication-btn {
+  margin-top: 0px !important;
 }
