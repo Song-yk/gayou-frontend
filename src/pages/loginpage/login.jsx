@@ -20,8 +20,10 @@ function Login() {
 
   useEffect(() => {
     // 카카오 API 초기화
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init('d3d19a28cb9d32729b173782c3d99ebf');
+    const kakaoApiKey = import.meta.env.REACT_APP_KAKAO_API_KEY;
+
+    if (kakaoApiKey && !window.Kakao.isInitialized()) {
+      window.Kakao.init(kakaoApiKey);
     }
   }, []);
 
@@ -81,12 +83,7 @@ function Login() {
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ marginTop: '20px' }}>
         <MyInput place="아이디 혹은 이메일" control={control} name="username" />
-        <MyInput
-          place="비밀번호"
-          type="password"
-          name="password"
-          control={control}
-        />
+        <MyInput place="비밀번호" type="password" name="password" control={control} />
         <MyButton
           type="submit"
           control={control}
