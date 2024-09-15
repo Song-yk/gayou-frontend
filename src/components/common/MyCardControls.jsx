@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -12,7 +13,7 @@ export default function MyCardControls(props) {
   const {
     width,
     image,
-    alt,
+    image2,
     title,
     overview,
     idx,
@@ -22,7 +23,12 @@ export default function MyCardControls(props) {
     removeCard,
     showIcons,
   } = props;
-
+  const [overviewSize, setOverviewSize] = useState(30);
+  useEffect(() => {
+    if (showIcons) {
+      setOverviewSize(20);
+    }
+  }, []);
   return (
     <Card
       sx={{ display: 'inline-flex', width: width || '100%', marginY: '5px' }}
@@ -31,19 +37,36 @@ export default function MyCardControls(props) {
         component="img"
         sx={{ width: '20%', borderRadius: '1.5em' }}
         image={image}
-        alt={alt}
+        alt=""
+        onError={e => {
+          if (e.target.src === image) {
+            e.target.src = image2;
+          } else if (e.target.src === image2) {
+            e.target.onerror = null;
+            e.target.src = '';
+          }
+        }}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'row', width: '80%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '80%',
+          height: '80%',
+        }}
+      >
         <CardContent sx={{ flex: '1 0 auto', textAlign: 'left' }}>
-          <Typography component="div" variant="h5" sx={{ fontWeight: 'bold' }}>
+          <Typography component="div" variant="h6" sx={{ fontWeight: 'bold' }}>
             {title}
           </Typography>
           <Typography
-            variant="subtitle1"
+            variant="subtitle2"
             color="text.secondary"
             component="div"
           >
-            {overview}
+            {overview.length > overviewSize
+              ? overview.slice(0, overviewSize) + '...'
+              : overview}
           </Typography>
         </CardContent>
         {showIcons && (
