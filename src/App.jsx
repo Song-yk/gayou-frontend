@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -60,12 +60,12 @@ function App() {
               <Route path="postlist" element={<Postlist />} />
               <Route path="updatepost" element={<Updatepost />} />
               <Route path="viewpost" element={<Viewpost />} />
-            <Route path="" element={<MyPageLayout />}>
-              <Route path="myPage" element={<MyCourse />} />
-              <Route path="myCourse" element={<MyCourse />} />
+              <Route path="" element={<MyPageLayout />}>
+                <Route path="myPage" element={<MyCourse />} />
+                <Route path="myCourse" element={<MyCourse />} />
+              </Route>
             </Route>
           </Route>
-
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
