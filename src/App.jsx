@@ -28,6 +28,7 @@ const Postlist = lazy(() => import('./pages/coursepost/postlist'));
 const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
 const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
+const Test = lazy(() => import('./pages/myPage/test'));
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
 
 const NotFound = lazy(() => import('./pages/errors/notFoundPage'));
@@ -59,12 +60,9 @@ function App() {
               <Route path="postlist" element={<Postlist />} />
               <Route path="updatepost" element={<Updatepost />} />
               <Route path="viewpost" element={<Viewpost />} />
-
-              {/* MyPageLayout을 보호된 레이아웃으로 래핑 */}
-              <Route path="" element={<MyPageLayout />}>
-                <Route path="myPage" element={<MyCourse />} />
-                <Route path="myCourse" element={<MyCourse />} />
-              </Route>
+            <Route path="" element={<MyPageLayout />}>
+              <Route path="myPage" element={<MyCourse />} />
+              <Route path="myCourse" element={<MyCourse />} />
             </Route>
           </Route>
 

@@ -98,7 +98,7 @@ export default function MyPageNavBar(props) {
         {myDrawer}
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
+        {/* <Toolbar /> */}
         {content}
       </Box>
     </Box>
