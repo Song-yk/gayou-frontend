@@ -27,7 +27,7 @@ const decomposeHangul = (text) => {
 };
 
 const Region = () => {
-    const [selectedRegion, setSelectedRegion] = useState(null);
+    const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedNeighborhoods, setSelectedNeighborhoods] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [filteredNeighborhoods, setFilteredNeighborhoods] = useState([]);
@@ -38,7 +38,7 @@ const Region = () => {
     const regions = ['유성구', '대덕구', '동구', '서구', '중구'];
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/locations/city?city=대전광역시`)
+        axios.get(`api/springboot/locations/city?city=대전광역시`)
             .then(response => {
                 setTotalNeighborhoods(response.data);
             })
@@ -55,7 +55,7 @@ const Region = () => {
         setShowSuggestions(false);
 
         if (region) {
-            axios.get(`http://localhost:8080/locations/district?city=대전광역시&district=${region}`)
+            axios.get(`api/springboot/locations/district?city=대전광역시&district=${region}`)
                 .then(response => {
                     setNeighborhoods(response.data);
                     //예 :["전체","진잠동","학하동","원신흥동","상대동","온천1동","온천2동","노은1동","노은2동","노은3동","신성동","전민동","구즉동","관평동"]
@@ -133,7 +133,7 @@ const Region = () => {
 
     return (
         <div className="options">
-            <Container className="min-vh-100 d-flex flex-column justify-content-center">
+            <Container className="min-vh-100 d-flex flex-column justify-content-start">
                 <Row className="mb-5">
                     <Col md={5} className="d-flex flex-column justify-content-start mt-5">
                         <h1 className="fw-bold" style={{ fontSize: '90px' }}>
@@ -181,7 +181,8 @@ const Region = () => {
                                     border: '1px solid black',
                                     borderRadius: '8px',
                                     padding: '10px 20px',
-                                    minWidth: '220px'
+                                    minWidth: '220px',
+                                    backgroundColor: selectedRegion === null ? '#FF9933' : '#FF9999',
                                 }}
                                 onClick={() => handleRegionClick(null)}
                                 disabled={searchInput.trim() !== ''}
@@ -229,25 +230,37 @@ const Region = () => {
                         )}
                     </Col>
                 </Row>
-                <Row className="m-auto">
-                    <Col className="text-end">
-                        <Button
-                            className="fw-bold btn-lg m-1"
-                            style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                            onClick={handleBeforeClick}
-                        >
-                            이전
-                        </Button>
-                        <Button
-                            className="fw-bold btn-lg"
-                            style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                            onClick={handleNextClick}
-                            disabled={selectedNeighborhoods.length === 0}
-                        >
-                            다음
-                        </Button>
-                    </Col>
-                </Row>
+
+                {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
+                <Button
+                className="fw-bold btn-lg m-5"
+                style={{
+                    position: 'fixed',
+                    left: '20px',
+                    bottom: '20px',
+                    backgroundColor: '#FFA500',
+                    borderRadius: '30px',
+                    border: '1px solid black',
+                }}
+                onClick={handleBeforeClick}
+                >
+                이전
+                </Button>
+
+                <Button
+                className="fw-bold btn-lg m-5"
+                style={{
+                    position: 'fixed',
+                    right: '20px',
+                    bottom: '20px',
+                    backgroundColor: '#FFA500',
+                    borderRadius: '30px',
+                    border: '1px solid black',
+                }}
+                onClick={handleNextClick}
+                >
+                다음
+                </Button>
             </Container>
         </div>
     );

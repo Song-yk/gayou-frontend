@@ -10,7 +10,6 @@ const Extra = () => {
   const navigate = useNavigate();
   const [age, setAge] = useState(25);
   const [gender, setGender] = useState('남성');
-  const [transport, setTransport] = useState('대중교통');
   const [travelDate, setTravelDate] = useState(new Date());
   const [isLocal, setIsLocal] = useState(false);
   const { region, neighborhoods } = location.state || {};
@@ -19,7 +18,7 @@ const Extra = () => {
   const handleNextClick = () => {
 
     //console.log(region, age, gender, travelDate, isLocal, transport);
-    navigate('/concept', { state: { region, neighborhoods, age, gender, travelDate, isLocal, transport } });
+    navigate('/concept', { state: { region, neighborhoods, age, gender, travelDate, isLocal } });
   };
 
   const handleBeforeClick = () => {
@@ -100,48 +99,39 @@ const Extra = () => {
                     </div>
                 </Col>
                 </Row>
-                <Row className="mb-4">
-                <Col md ={6}>
-                    <div className="mb-4">
-                    <h4>이동 수단을 알려주세요.</h4>
-                    <hr/>
-                    <Button
-                        variant={transport === '대중교통' ? 'warning' : 'light'}
-                        onClick={() => setTransport('대중교통')}
-                        className="m-1"
-                    >
-                        대중교통
-                    </Button>
-                    <Button
-                        variant={transport === '자가용' ? 'warning' : 'light'}
-                        onClick={() => setTransport('자가용')}
-                        className="m-1"
-                    >
-                        자가용
-                    </Button>
-                    </div>
-                </Col>
-                </Row>
-                <Row className="m-auto">
-                    <Col className="text-end">
-                        <Button
-                          className="fw-bold btn-lg m-1"
-                          style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                          onClick={handleBeforeClick}
-                          >
-                          이전
-                        </Button>
-                        <Button
-                        className="fw-bold btn-lg"
-                        style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                        onClick={handleNextClick}
-                        >
-                        다음
-                        </Button>
-                    </Col>
-                </Row>
             </Col>
         </Row>
+
+        {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
+        <Button
+          className="fw-bold btn-lg m-5"
+          style={{
+            position: 'fixed',
+            left: '20px',
+            bottom: '20px',
+            backgroundColor: '#FFA500',
+            borderRadius: '30px',
+            border: '1px solid black',
+          }}
+          onClick={handleBeforeClick}
+        >
+          이전
+        </Button>
+
+        <Button
+          className="fw-bold btn-lg m-5"
+          style={{
+            position: 'fixed',
+            right: '20px',
+            bottom: '20px',
+            backgroundColor: '#FFA500',
+            borderRadius: '30px',
+            border: '1px solid black',
+          }}
+          onClick={handleNextClick}
+        >
+          다음
+        </Button>
       </Container>
     </div>
   );

@@ -8,7 +8,7 @@ const Concept = () => {
   const navigate = useNavigate();
   const [selectedConcepts, setSelectedConcepts] = useState([]);
   
-  const { region, neighborhoods, age, gender, travelDate, isLocal, transport } = location.state || {};
+  const { region, neighborhoods, age, gender, travelDate, isLocal} = location.state || {};
   
   const concepts = ['빵지순례', '지역 축제', '예술/공연', '자연', '스포츠', '로컬맛집', '동네 탐험', '감성 카페', '쇼핑', '아이/반려동물'];
 
@@ -21,18 +21,19 @@ const Concept = () => {
   };
 
   const handleNextClick = () => {
-    console.log(region, neighborhoods, age, gender, travelDate, isLocal,selectedConcepts);
-    navigate('/routeCreator', { state: { region, neighborhoods, age, gender, travelDate, isLocal, transport, selectedConcepts } });
+    console.log(region, neighborhoods, age, gender, travelDate, isLocal, selectedConcepts);
+    navigate('/routeCreator', { state: { region, neighborhoods, age, gender, travelDate, isLocal, selectedConcepts } });
   };
 
   const handleBeforeClick = () => {
     navigate(-1);
   };
+
   return (
     <div className="options">
       <Container className="min-vh-100 d-flex flex-column justify-content-start">
-        <Row className="mb-5">
-          <Col className="d-flex flex-column justify-content-center">
+        <Row className="mb-5 mt-5">
+          <Col className="d-flex flex-column justify-content-start">
             <h1 className="fw-bold" style={{ fontSize: '90px' }}>
               마지막이에유.<br />
               원하는 컨셉을 골라보세유.
@@ -53,22 +54,39 @@ const Concept = () => {
                 </Button>
               ))}
             </div>
-            <Button
-              className="fw-bold btn-lg m-1"
-              style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-              onClick={handleBeforeClick}
-              >
-              이전
-            </Button>
-            <Button
-              className="fw-bold btn-lg"
-              style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-              onClick={handleNextClick}
-            >
-              다음
-            </Button>
           </Col>
         </Row>
+
+        {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
+        <Button
+          className="fw-bold btn-lg m-5"
+          style={{
+            position: 'fixed',
+            left: '20px',
+            bottom: '20px',
+            backgroundColor: '#FFA500',
+            borderRadius: '30px',
+            border: '1px solid black',
+          }}
+          onClick={handleBeforeClick}
+        >
+          이전
+        </Button>
+
+        <Button
+          className="fw-bold btn-lg m-5"
+          style={{
+            position: 'fixed',
+            right: '20px',
+            bottom: '20px',
+            backgroundColor: '#FFA500',
+            borderRadius: '30px',
+            border: '1px solid black',
+          }}
+          onClick={handleNextClick}
+        >
+          다음
+        </Button>
       </Container>
     </div>
   );
