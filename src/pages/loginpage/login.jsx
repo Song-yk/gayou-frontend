@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Typography, Link, Box, Grid } from '@mui/material';
@@ -9,6 +10,8 @@ import kakaoLoginImg from '../../assets/images/kakao_login_medium_narrow.png';
 import googleLoginImg from '../../assets/images/web_light_sq_SI@1x.png';
 
 function Login() {
+  const navigate = useNavigate();
+
   const defaultValues = {
     username: '',
     password: '',
@@ -53,7 +56,7 @@ function Login() {
       const name = response.data.username;
       localStorage.setItem('name', name);
 
-      window.location.href = '/';
+      navigate('/');
     } catch (error) {
       console.error('로그인 실패:', error);
       alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
