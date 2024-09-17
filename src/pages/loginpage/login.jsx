@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Typography, Link, Box, Grid } from '@mui/material';
@@ -9,6 +10,8 @@ import kakaoLoginImg from '../../assets/images/kakao_login_medium_narrow.png';
 import googleLoginImg from '../../assets/images/web_light_sq_SI@1x.png';
 
 function Login() {
+  const navigate = useNavigate();
+
   const defaultValues = {
     username: '',
     password: '',
@@ -31,7 +34,6 @@ function Login() {
     window.Kakao.Auth.login({
       success: function (authObj) {
         console.log('카카오 로그인 성공:', authObj);
-        // 카카오 로그인 성공 시 처리 로직 추가
       },
       fail: function (err) {
         console.error('카카오 로그인 실패:', err);
@@ -42,22 +44,21 @@ function Login() {
   const onSubmit = async data => {
     try {
       const hashedPassword = CryptoJS.SHA256(data.password).toString();
-      // 서버의 로그인 API 엔드포인트로 POST 요청을 보냅니다.
       const response = await axios.post('/api/springboot/auth/login', {
         username: data.username,
         password: hashedPassword,
       });
 
-      // 로그인 성공 시 처리
-      console.log('로그인 성공:', response.data);
-      // 예를 들어, JWT 토큰을 로컬 스토리지에 저장할 수 있습니다.
-      localStorage.setItem('token', response.data.token);
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      const id = response.data.userId;
+      localStorage.setItem('id', id);
+      const name = response.data.username;
+      localStorage.setItem('name', name);
 
-      // 로그인 후 리다이렉트
-      window.location.href = '/'; // 원하는 페이지로 리다이렉트
+      navigate('/');
     } catch (error) {
       console.error('로그인 실패:', error);
-      // 로그인 실패 시 처리 (예: 에러 메시지 표시)
       alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
     }
   };

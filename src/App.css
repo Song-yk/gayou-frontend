@@ -128,7 +128,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-.authBox {
+.auth-box {
   height: 100%;
   align-content: center;
 }
@@ -142,4 +142,8 @@ input::-webkit-inner-spin-button {
 
 .authentication-btn {
   margin-top: 0px !important;
+}
+
+.auth-container {
+  height: 100%;
 }

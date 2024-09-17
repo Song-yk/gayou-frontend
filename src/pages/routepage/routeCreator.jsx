@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import KakaoMap from '../../components/common/kakaoMap.jsx';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
@@ -12,6 +13,7 @@ const RouteCreator = () => {
   const [myData, setMyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
+  const navigate = useNavigate();
 
   const { control } = useForm();
 
@@ -88,20 +90,23 @@ const RouteCreator = () => {
   }
 
   const saveCourse = async () => {
-    try {
-      myData.userId = 1;
-      const response = await axios.post(
-        '/api/springboot/route/locations',
-        myData
-      );
+    const id = localStorage.getItem('id');
+    if (id) {
+      try {
+        myData.userId = id;
+        const response = await axios.post('/api/springboot/route/locations', myData);
+        console.log(response);
 
-      if (response.status === 200) {
-        console.log('Course saved successfully!');
-      } else {
-        console.log('Failed to save course.');
+        if (response.status === 201) {
+          navigate('/');
+        } else {
+          alert('코스 저장에 실패 했습니다.');
+        }
+      } catch (error) {
+        console.error('Error saving course:', error);
       }
-    } catch (error) {
-      console.error('Error saving course:', error);
+    } else {
+      alert('로그인 하셈');
     }
   };
 
@@ -138,9 +143,7 @@ const RouteCreator = () => {
           <Box sx={{ width: '80%' }}>
             <Grid container spacing={3}>
               <AnimatedGridItem item xs={12}>
-                <h1 style={{ textAlign: 'left' }}>
-                  오늘의 동네는 {myData.town}입니다.
-                </h1>
+                <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
               </AnimatedGridItem>
               <AnimatedGridItem
                 item
@@ -153,9 +156,7 @@ const RouteCreator = () => {
                 }}
               >
                 <Box>
-                  <h3 style={{ textAlign: 'left', fontWeight: 'bold' }}>
-                    코스명
-                  </h3>
+                  <h3 style={{ textAlign: 'left', fontWeight: 'bold' }}>코스명</h3>
                 </Box>
                 <Box
                   sx={{
@@ -204,11 +205,7 @@ const RouteCreator = () => {
                 xl={7}
                 xxl={7}
               >
-                <KakaoMap
-                  name="location"
-                  control={control}
-                  center={myData.data}
-                />
+                <KakaoMap name="location" control={control} center={myData.data} />
               </AnimatedGridItem>
               <AnimatedGridItem item xs={12} md={12}>
                 <Box sx={{ textAlign: 'right' }}>

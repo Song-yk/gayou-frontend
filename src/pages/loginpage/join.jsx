@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Box } from '@mui/material';
-import Paper from '@mui/material/Paper';
 import MyInput from '../../components/common/MyInput';
 import MyButton from '../../components/common/MyButton';
 
@@ -58,10 +57,16 @@ function Join() {
         birthday: formattedBirthday,
         password: hashedPassword,
       };
-      const res = axios.post('/api/springboot/auth/register', submissionData);
-      if (res.status === 200) {
-        navigate('/login');
-      }
+      axios
+        .post('/api/springboot/auth/register', submissionData)
+        .then(res => {
+          if (res.status === 200) {
+            navigate('/login');
+          }
+        })
+        .catch(error => {
+          alert('회원 가입에 실패 하셨습니다.');
+        });
     } catch (error) {
       alert('회원 가입에 실패 하셨습니다.');
     } finally {
@@ -118,10 +123,7 @@ function Join() {
   const formatTime = timeInSeconds => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
-      2,
-      '0'
-    )}`;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
   const handleResendClick = () => {
@@ -129,188 +131,184 @@ function Join() {
   };
 
   return (
-    <Box className="authBox" sx={{ textAlign: '-webkit-center' }}>
-      <Paper sx={{ maxWidth: '400px', padding: '20px' }}>
-        <h3>회원 가입</h3>
-        <p>회원가입을 위한 정보를 입력해주세요.</p>
-        <form onSubmit={handleSubmit(submission)}>
-          <Box>
-            <MyInput
-              type="text"
-              label="아이디"
-              name="username"
-              control={control}
-              rules={{
-                required: '아이디는 필수 항목입니다.',
-                minLength: {
-                  value: 3,
-                  message: '아이디는 최소 3자 이상이어야 합니다.',
-                },
-                pattern: {
-                  value: /^[A-Za-z0-9]{3,15}$/,
-                  message: '아이디는 3~15자리의 알파벳과 숫자만 허용됩니다.',
-                },
-              }}
-            />
-          </Box>
-          <Box>
-            <MyInput
-              type="text"
-              label="이름"
-              name="name"
-              control={control}
-              rules={{
-                required: '이름은 필수 항목입니다.',
-                minLength: {
-                  value: 2,
-                  message: '이름은 최소 2자 이상이어야 합니다.',
-                },
-              }}
-            />
-          </Box>
+    <Box>
+      <h3>회원 가입</h3>
+      <p>회원가입을 위한 정보를 입력해주세요.</p>
+      <form onSubmit={handleSubmit(submission)}>
+        <Box>
+          <MyInput
+            type="text"
+            label="아이디"
+            name="username"
+            control={control}
+            rules={{
+              required: '아이디는 필수 항목입니다.',
+              minLength: {
+                value: 3,
+                message: '아이디는 최소 3자 이상이어야 합니다.',
+              },
+              pattern: {
+                value: /^[A-Za-z0-9]{3,15}$/,
+                message: '아이디는 3~15자리의 알파벳과 숫자만 허용됩니다.',
+              },
+            }}
+          />
+        </Box>
+        <Box>
+          <MyInput
+            type="text"
+            label="이름"
+            name="name"
+            control={control}
+            rules={{
+              required: '이름은 필수 항목입니다.',
+              minLength: {
+                value: 2,
+                message: '이름은 최소 2자 이상이어야 합니다.',
+              },
+            }}
+          />
+        </Box>
 
-          <Box>
-            <MyInput
-              type="email"
-              label="이메일"
-              name="email"
-              control={control}
-              width="61%"
-              rules={{
-                required: '이메일은 필수 항목입니다.',
-                pattern: {
-                  value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-                  message: '유효한 이메일 주소를 입력해 주세요.',
-                },
-              }}
-            />
-            <MyButton
-              className="verificationEmailBtn"
-              width="fit-content"
-              name="verificationEmailBtn"
-              color="sunsetOrange"
-              control={control}
-              value="인증번호 받기"
-              borderRadius="5px"
-              onClick={sendVerificationEmail}
-            />
-          </Box>
+        <Box>
+          <MyInput
+            type="email"
+            label="이메일"
+            name="email"
+            control={control}
+            width="61%"
+            rules={{
+              required: '이메일은 필수 항목입니다.',
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                message: '유효한 이메일 주소를 입력해 주세요.',
+              },
+            }}
+          />
+          <MyButton
+            className="verificationEmailBtn"
+            width="fit-content"
+            name="verificationEmailBtn"
+            color="sunsetOrange"
+            control={control}
+            value="인증번호 받기"
+            borderRadius="5px"
+            onClick={sendVerificationEmail}
+          />
+        </Box>
 
-          {showAuthNumberField && (
-            <Box>
-              <MyInput
-                type="number"
-                place="인증번호"
-                name="authenticationNumber"
-                control={control}
-                width="63%"
-                rules={{
-                  required: '인증번호는 필수 항목입니다.',
-                }}
-              />
-              <span
-                className="authentication-span"
-                style={{
-                  marginLeft: '14px',
-                  color: 'red',
-                  verticalAlign: 'middle',
-                }}
-              >
-                {formatTime(remainingTime)}
-              </span>
-              <MyButton
-                className="authentication-btn"
-                width="fit-content"
-                name=""
-                color="sunsetOrange"
-                control={control}
-                value="인증"
-                borderRadius="5px"
-                onClick={verifyAuthNumber}
-              />
-            </Box>
-          )}
-
-          <Box>
-            <MyInput
-              type="password"
-              label="비밀번호"
-              name="password"
-              control={control}
-              rules={{
-                required: '비밀번호는 필수 항목입니다.',
-                minLength: {
-                  value: 8,
-                  message: '비밀번호는 최소 8자 이상이어야 합니다.',
-                },
-                pattern: {
-                  value:
-                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-                  message:
-                    '비밀번호는 영문, 숫자, 특수문자를 포함하여 8자리 이상이어야 합니다.',
-                },
-              }}
-            />
-          </Box>
-
-          <Box>
-            <MyInput
-              type="password"
-              label="비밀번호 확인"
-              name="passwordChk"
-              control={control}
-              rules={{
-                required: '비밀번호 확인은 필수 항목입니다.',
-                validate: value =>
-                  value === getValues('password') ||
-                  '비밀번호가 일치하지 않습니다.',
-              }}
-            />
-          </Box>
-
-          <Box>
-            <MyInput
-              type="text"
-              label="전화번호"
-              name="phoneNumber"
-              control={control}
-              rules={{
-                pattern: {
-                  value: /^[0-9]{10,11}$/,
-                  message: '전화번호는 10~11자리 숫자만 입력 가능합니다.',
-                },
-              }}
-            />
-          </Box>
-
+        {showAuthNumberField && (
           <Box>
             <MyInput
               type="number"
-              label="생년월일"
-              place="생년월일 6자리"
-              name="birthday"
+              place="인증번호"
+              name="authenticationNumber"
               control={control}
+              width="63%"
               rules={{
-                pattern: {
-                  value: /^[0-9]{6}$/,
-                  message: '생년월일은 6자리 입니다.',
-                },
+                required: '인증번호는 필수 항목입니다.',
               }}
             />
+            <span
+              className="authentication-span"
+              style={{
+                marginLeft: '14px',
+                color: 'red',
+                verticalAlign: 'middle',
+              }}
+            >
+              {formatTime(remainingTime)}
+            </span>
+            <MyButton
+              className="authentication-btn"
+              width="fit-content"
+              name=""
+              color="sunsetOrange"
+              control={control}
+              value="인증"
+              borderRadius="5px"
+              onClick={verifyAuthNumber}
+            />
           </Box>
+        )}
 
-          <MyButton
-            name=""
-            color="sunsetOrange"
+        <Box>
+          <MyInput
+            type="password"
+            label="비밀번호"
+            name="password"
             control={control}
-            value="가입하기"
-            borderRadius="5px"
-            margin="0px"
-            width="100%"
-            onClick={handleSubmit(submission)}
+            rules={{
+              required: '비밀번호는 필수 항목입니다.',
+              minLength: {
+                value: 8,
+                message: '비밀번호는 최소 8자 이상이어야 합니다.',
+              },
+              pattern: {
+                value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                message:
+                  '비밀번호는 영문, 숫자, 특수문자를 포함하여 8자리 이상이어야 합니다.',
+              },
+            }}
           />
-        </form>
-      </Paper>
+        </Box>
+
+        <Box>
+          <MyInput
+            type="password"
+            label="비밀번호 확인"
+            name="passwordChk"
+            control={control}
+            rules={{
+              required: '비밀번호 확인은 필수 항목입니다.',
+              validate: value =>
+                value === getValues('password') || '비밀번호가 일치하지 않습니다.',
+            }}
+          />
+        </Box>
+
+        <Box>
+          <MyInput
+            type="text"
+            label="전화번호"
+            name="phoneNumber"
+            control={control}
+            rules={{
+              pattern: {
+                value: /^[0-9]{10,11}$/,
+                message: '전화번호는 10~11자리 숫자만 입력 가능합니다.',
+              },
+            }}
+          />
+        </Box>
+
+        <Box>
+          <MyInput
+            type="number"
+            label="생년월일"
+            place="생년월일 6자리"
+            name="birthday"
+            control={control}
+            rules={{
+              pattern: {
+                value: /^[0-9]{6}$/,
+                message: '생년월일은 6자리 입니다.',
+              },
+            }}
+          />
+        </Box>
+
+        <MyButton
+          name=""
+          color="sunsetOrange"
+          control={control}
+          value="가입하기"
+          borderRadius="5px"
+          margin="0px"
+          width="100%"
+          onClick={handleSubmit(submission)}
+        />
+      </form>
     </Box>
   );
 }
