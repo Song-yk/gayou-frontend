@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Nav } from 'react-bootstrap';
 import { BellFill } from 'react-bootstrap-icons';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
 
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState(["댓글이 달렸습니다."]);
   const [user, setUser] = useState('');
@@ -26,6 +28,9 @@ const Navbar = () => {
     localStorage.removeItem('name'); 
     localStorage.removeItem('id');  
     setIsLoggedIn(false);              
+  };
+  const handleProfileClick = () => {
+    navigate('/profile');
   };
 
   return (
@@ -60,7 +65,7 @@ const Navbar = () => {
 
               <Dropdown.Menu>
                 <Dropdown.Item href="#action/1">나의 코스</Dropdown.Item>
-                <Dropdown.Item href="#action/2">계정 설정</Dropdown.Item>
+                <Dropdown.Item onClick={handleProfileClick}>계정 설정</Dropdown.Item>
                 <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
