@@ -32,15 +32,19 @@ export default function MyPageNavBar(props) {
           <ListItem disablePadding>
             <ListItemButton
               component={Link}
-              to="/myPage/myCourse"
-              selected={'/myPage/myCourse' === path || '/myPage' === path}
+              to="/myCourse"
+              selected={'/myCourse' === path}
             >
               <ListItemText primary={'나의 코스'} />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/" selected={'/' === path}>
+            <ListItemButton
+              component={Link}
+              to="/saveCourse"
+              selected={'/saveCourse' === path}
+            >
               <ListItemText primary={'저장한 코스'} />
             </ListItemButton>
           </ListItem>

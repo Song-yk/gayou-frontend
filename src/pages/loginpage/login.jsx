@@ -51,6 +51,8 @@ function Login() {
 
       const token = response.data.token;
       localStorage.setItem('token', token);
+      const expiresAt = new Date().getTime() + 3600 * 1000;
+      localStorage.setItem('expiresAt', expiresAt);
       const id = response.data.userId;
       localStorage.setItem('id', id);
       const name = response.data.username;
