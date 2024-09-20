@@ -20,7 +20,6 @@ const RouteCreator = () => {
 
   const GetData = async () => {
     try {
-      console.log(myData);
       const response = await axios.get('/api/flask/route/locations/');
       setMyData(response.data);
     } catch (error) {
@@ -107,7 +106,7 @@ const RouteCreator = () => {
         console.log(response);
 
         if (response.status === 201) {
-          navigate('/');
+          navigate(`/Createpost?id=${response.data}`);
         } else {
           alert('코스 저장에 실패 했습니다.');
         }
@@ -123,7 +122,6 @@ const RouteCreator = () => {
   const retryRec = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get('/api/flask/retryRec');
       const response = await axios.get('/api/flask/route/locations/');
 
       if (response.status === 200) {
@@ -205,19 +203,27 @@ const RouteCreator = () => {
                   />
                 </Box>
               </AnimatedGridItem>
+
+              {/* 지도는 항상 표시 */}
               <AnimatedGridItem
                 item
                 style={{ paddingTop: 0 }}
                 xs={12}
                 sm={12}
-                md={4}
+                md={12}
                 lg={5}
                 xl={7}
                 xxl={7}
               >
-                <KakaoMap name="location" control={control} center={myData.data} />
+                <KakaoMap
+                  name="location"
+                  control={control}
+                  center={myData.data}
+                  editMode={editMode}
+                />
               </AnimatedGridItem>
-              <AnimatedGridItem item xs={12} md={12}>
+
+              <AnimatedGridItem item xs={12}>
                 <Box sx={{ textAlign: 'right' }}>
                   <MyButton
                     width="10%"

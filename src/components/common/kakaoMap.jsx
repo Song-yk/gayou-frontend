@@ -2,10 +2,11 @@ import { useEffect, useRef, useCallback } from 'react';
 import { Controller } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { Box } from '@mui/material';
 
 function KakaoMap(props) {
   const { kakao } = window;
-  const { width, height, name, control, center } = props;
+  const center = props.center;
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
 
@@ -39,15 +40,8 @@ function KakaoMap(props) {
           offset: new kakao.maps.Point(13, 37),
         };
 
-        const markerImage = new kakao.maps.MarkerImage(
-          imageSrc,
-          imageSize,
-          imgOptions
-        );
-        const markerPosition = new kakao.maps.LatLng(
-          location.mapy,
-          location.mapx
-        );
+        const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
+        const markerPosition = new kakao.maps.LatLng(location.mapy, location.mapx);
         const marker = new kakao.maps.Marker({
           position: markerPosition,
           image: markerImage,
@@ -67,8 +61,7 @@ function KakaoMap(props) {
 
       map.setBounds(bounds);
 
-      const VITE_KAKAO_MAP_REST_API_KEY = import.meta.env
-        .VITE_KAKAO_MAP_REST_API_KEY;
+      const VITE_KAKAO_MAP_REST_API_KEY = import.meta.env.VITE_KAKAO_MAP_REST_API_KEY;
       const url = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
 
       const origin = { x: center[0].mapx, y: center[0].mapy };
@@ -110,18 +103,12 @@ function KakaoMap(props) {
                 for (let i = 0; i < router.vertexes.length; i += 2) {
                   if (i + 1 < router.vertexes.length) {
                     linePath.push(
-                      new kakao.maps.LatLng(
-                        router.vertexes[i + 1],
-                        router.vertexes[i]
-                      )
+                      new kakao.maps.LatLng(router.vertexes[i + 1], router.vertexes[i])
                     );
                   }
                 }
               } else {
-                console.error(
-                  'Unexpected structure for vertexes:',
-                  router.vertexes
-                );
+                console.error('Unexpected structure for vertexes:', router.vertexes);
               }
             });
           });
@@ -146,9 +133,7 @@ function KakaoMap(props) {
 
       fetchData();
     } else {
-      console.warn(
-        'Kakao or Kakao Maps is not loaded or center is not defined.'
-      );
+      console.warn('Kakao or Kakao Maps is not loaded or center is not defined.');
     }
   }, [kakao, center]);
 
@@ -185,14 +170,14 @@ function KakaoMap(props) {
 
   return (
     <Controller
-      name={name}
-      control={control}
+      name={props.name}
+      control={props.control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className="map_wrap">
           <div
             ref={mapRef}
             id="map"
-            style={{ width: width || '100%', height: height || '670px' }}
+            style={{ width: props.width || '100%', height: props.height || '670px' }}
           ></div>
           <div className="custom_typecontrol radius_border">
             <span
@@ -210,6 +195,11 @@ function KakaoMap(props) {
               스카이뷰
             </span>
           </div>
+          {props.editMode && (
+            <div className="custom_editcontrol radius_border">
+              <Box sx={{}}>asdadsd</Box>
+            </div>
+          )}
           <div className="custom_zoomcontrol radius_border">
             <span onClick={zoomIn}>
               <AddIcon alt="확대" />
