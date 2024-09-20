@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Typography, Link, Box, Grid } from '@mui/material';
@@ -11,6 +11,7 @@ import googleLoginImg from '../../assets/images/web_light_sq_SI@1x.png';
 
 function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const defaultValues = {
     username: '',
@@ -58,7 +59,8 @@ function Login() {
       const name = response.data.username;
       localStorage.setItem('name', name);
 
-      navigate('/');
+      const redirectPath = searchParams.get('redirect') || '/';
+      navigate(redirectPath);
     } catch (error) {
       console.error('로그인 실패:', error);
       alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');

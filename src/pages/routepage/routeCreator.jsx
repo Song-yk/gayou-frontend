@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import KakaoMap from '../../components/common/kakaoMap.jsx';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
@@ -14,11 +14,13 @@ const RouteCreator = () => {
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { control } = useForm();
 
   const GetData = async () => {
     try {
+      console.log(myData);
       const response = await axios.get('/api/flask/route/locations/');
       setMyData(response.data);
     } catch (error) {
@@ -29,7 +31,13 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
-    GetData();
+    const storedData = sessionStorage.getItem('myData');
+    if (storedData) {
+      setMyData(JSON.parse(storedData)); // myData를 복원
+      setLoading(false); // 데이터를 복원한 후 로딩 종료
+    } else {
+      GetData(); // myData가 없으면 다시 API 호출
+    }
   }, []);
 
   const AnimatedGridItem = styled(Grid)(({ theme }) => ({
@@ -90,11 +98,12 @@ const RouteCreator = () => {
   }
 
   const saveCourse = async () => {
-    const id = localStorage.getItem('id');
-    if (id) {
+    const token = localStorage.getItem('token');
+    if (token) {
       try {
-        myData.userId = id;
-        const response = await axios.post('/api/springboot/route/locations', myData);
+        const response = await axios.post('/api/springboot/route/locations', myData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         console.log(response);
 
         if (response.status === 201) {
@@ -106,7 +115,8 @@ const RouteCreator = () => {
         console.error('Error saving course:', error);
       }
     } else {
-      alert('로그인 하셈');
+      sessionStorage.setItem('myData', JSON.stringify(myData));
+      navigate(`/login?redirect=${location.pathname}`);
     }
   };
 
