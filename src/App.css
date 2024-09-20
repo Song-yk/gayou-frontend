@@ -131,22 +131,26 @@
   position: absolute;
   top: 5px;
   left: 5px;
-  width: 20%;
+  width: 350px;
   overflow: hidden;
   z-index: 1;
   background-color: #fff;
+  height: 650px;
 }
-
-.custom_editcontrol span {
-  display: block;
-  width: 36px;
-  text-align: center;
-  cursor: pointer;
-  padding: 5px;
+.custom_editcontrol div.MuiGrid-container {
+  max-height: 490px;
+  overflow-y: auto;
 }
-
-.custom_editcontrol span:first-child {
-  border-bottom: 1px solid #bfbfbf;
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar {
+  width: 10px;
+}
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar-thumb {
+  background-color: #2f3542;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+}
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar-track {
+  box-shadow: inset 0px 0px 5px white;
 }
 
 .MuiCardContent-root {
