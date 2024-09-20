@@ -30,6 +30,7 @@ const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
 const Test = lazy(() => import('./pages/myPage/test'));
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
+const SaveCourse = lazy(() => import('./pages/myPage/saveCourse'));
 
 const NotFound = lazy(() => import('./pages/errors/notFoundPage'));
 
@@ -61,8 +62,8 @@ function App() {
               <Route path="updatepost" element={<Updatepost />} />
               <Route path="viewpost" element={<Viewpost />} />
               <Route path="" element={<MyPageLayout />}>
-                <Route path="myPage" element={<MyCourse />} />
                 <Route path="myCourse" element={<MyCourse />} />
+                <Route path="saveCourse" element={<SaveCourse />} />
               </Route>
             </Route>
           </Route>

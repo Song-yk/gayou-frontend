@@ -10,6 +10,9 @@ const AuthLayout = () => {
     return <Navigate to="/" />;
   }
 
+  const expiresAt = new Date().getTime() + 3600 * 1000;
+  localStorage.setItem('expiresAt', expiresAt);
+
   // 토큰이 없으면 자식 컴포넌트 렌더링
   return (
     <div className="auth-container">
