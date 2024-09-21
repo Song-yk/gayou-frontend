@@ -31,8 +31,7 @@ function KakaoMap(props) {
       const waypoints = [];
 
       center.forEach((location, index) => {
-        const imageSrc =
-          'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
+        const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
         const imageSize = new kakao.maps.Size(36, 37);
         const imgOptions = {
           spriteSize: new kakao.maps.Size(36, 691),
@@ -102,9 +101,7 @@ function KakaoMap(props) {
               if (router.vertexes && router.vertexes.length > 0) {
                 for (let i = 0; i < router.vertexes.length; i += 2) {
                   if (i + 1 < router.vertexes.length) {
-                    linePath.push(
-                      new kakao.maps.LatLng(router.vertexes[i + 1], router.vertexes[i])
-                    );
+                    linePath.push(new kakao.maps.LatLng(router.vertexes[i + 1], router.vertexes[i]));
                   }
                 }
               } else {
@@ -174,24 +171,12 @@ function KakaoMap(props) {
       control={props.control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className="map_wrap">
-          <div
-            ref={mapRef}
-            id="map"
-            style={{ width: props.width || '100%', height: props.height || '670px' }}
-          ></div>
+          <div ref={mapRef} id="map" style={{ width: props.width || '100%', height: props.height || '670px' }}></div>
           <div className="custom_typecontrol radius_border">
-            <span
-              id="btnRoadmap"
-              className="selected_btn"
-              onClick={() => setMapType('roadmap')}
-            >
+            <span id="btnRoadmap" className="selected_btn" onClick={() => setMapType('roadmap')}>
               지도
             </span>
-            <span
-              id="btnSkyview"
-              className="custom_type_btn"
-              onClick={() => setMapType('skyview')}
-            >
+            <span id="btnSkyview" className="custom_type_btn" onClick={() => setMapType('skyview')}>
               스카이뷰
             </span>
           </div>
