@@ -48,15 +48,16 @@ const HomePage = () => {
         alt="한꿈이"
         style={{
           position: 'absolute',
-          bottom: '100px', 
-          right: '400px', 
+          bottom: '10vh', 
+          right: '20vw', 
           width: '200px', 
           height: 'auto', 
           zIndex: -1
         }}
       />
+
     </div>
   );
 };
 
-export default HomePage;
+export default HomePage; 
