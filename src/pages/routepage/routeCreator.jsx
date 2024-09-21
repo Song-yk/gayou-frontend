@@ -7,17 +7,7 @@ import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
 import MyButton from '../../components/common/MyButton.jsx';
 import { styled } from '@mui/material/styles';
-import {
-  Box,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Typography,
-  Card,
-  CardContent,
-  Avatar,
-  Button,
-} from '@mui/material';
+import { Box, RadioGroup, FormControlLabel, Radio, Typography, Card, CardContent, Avatar, Button } from '@mui/material';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
@@ -39,6 +29,7 @@ const RouteCreator = () => {
     try {
       const response = await axios.get('/api/flask/route/locations/');
       setMyData(response.data);
+      sessionStorage.setItem('myData', JSON.stringify(response.data));
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -47,28 +38,31 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
+    const { region, travelDate, selectedConcepts } = location.state || {};
+    if (!region) return navigate('/region');
+    if (!travelDate) return navigate('/extra');
+    if (!selectedConcepts) return navigate('/concept');
+
     const storedData = sessionStorage.getItem('myData');
     if (storedData) {
-      setMyData(JSON.parse(storedData)); // myData를 복원
-      setLoading(false); // 데이터를 복원한 후 로딩 종료
+      setMyData(JSON.parse(storedData));
+      setLoading(false);
     } else {
-      GetData(); // myData가 없으면 다시 API 호출
+      GetData();
     }
   }, []);
 
   const fetchPlaces = async () => {
     try {
       const response = await axios.get('/api/flask/route/locations/');
-      console.log(response.data);
-      console.log(response.data.data);
-      setPlaces(response.data.data); // places 상태 업데이트
+      setPlaces(response.data.data);
     } catch (error) {
       console.error('Failed to fetch places:', error);
     }
   };
 
   useEffect(() => {
-    fetchPlaces(); // places 데이터를 가져옴
+    fetchPlaces();
   }, []);
 
   const AnimatedGridItem = styled(Grid)(({ theme }) => ({
@@ -147,10 +141,10 @@ const RouteCreator = () => {
         const response = await axios.post('/api/springboot/route/locations', myData, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response);
 
         if (response.status === 201) {
           navigate(`/Createpost?id=${response.data}`);
+          sessionStorage.removeItem('myData');
         } else {
           alert('코스 저장에 실패 했습니다.');
         }
@@ -170,6 +164,7 @@ const RouteCreator = () => {
 
       if (response.status === 200) {
         setMyData(response.data);
+        sessionStorage.setItem('myData', JSON.stringify(response.data));
       } else {
         alert('Failed to get new recommendations.');
       }
@@ -183,9 +178,9 @@ const RouteCreator = () => {
 
   const [headFilter, setHeadFilter] = useState('recom');
 
-  const handleDevices = (event, newDevices) => {
-    if (newDevices !== null) {
-      setHeadFilter(newDevices);
+  const handleEditModeMethod = (event, newEditModeMethod) => {
+    if (newEditModeMethod !== null) {
+      setHeadFilter(newEditModeMethod);
     }
   };
 
@@ -223,14 +218,14 @@ const RouteCreator = () => {
       </ToggleButton>
     );
   }
+
   const addPlaceToRoute = useCallback(
     place => {
-      // 중복된 장소인지 확인
       if (!myData.data.some(item => item.contentid === place.contentid)) {
-        const newItems = [...myData.data, place]; // 기존 데이터에 새로운 장소 추가
+        const newItems = [...myData.data, place];
         setMyData(prevData => {
           const updatedData = { ...prevData, data: newItems };
-          sessionStorage.setItem('myData', JSON.stringify(updatedData)); // sessionStorage에 저장
+          sessionStorage.setItem('myData', JSON.stringify(updatedData));
           return updatedData;
         });
       } else {
@@ -249,8 +244,8 @@ const RouteCreator = () => {
             <ToggleButtonGroup
               value={headFilter}
               exclusive
-              onChange={handleDevices}
-              aria-label="device"
+              onChange={handleEditModeMethod}
+              aria-label="editModeMethod"
               sx={{
                 width: '100%',
                 '& .MuiToggleButton-root:first-child': { marginRight: '5px' },
@@ -260,35 +255,39 @@ const RouteCreator = () => {
               {myToggleBtn('recom', '추천여행지')}
               {myToggleBtn('search', '검색결과')}
             </ToggleButtonGroup>
-            <Box sx={{ '& > :not(style)': { m: 1 } }}>
-              <FormControl sx={{ width: '95%' }}>
-                <Input
-                  id="input-with-icon-adornment"
-                  endAdornment={
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ cursor: 'pointer' }} />
-                    </InputAdornment>
-                  }
-                  sx={{
-                    background: '#eee',
-                    borderRadius: '5px',
-                    '&:before': { borderBottom: 'none !important' },
-                    '&:after': { borderBottom: 'none' },
-                  }}
-                />
-              </FormControl>
-            </Box>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              defaultValue="travel"
-              sx={{ margin: '', display: 'block' }}
-            >
-              {subFilterFunction('travel', '여행지')}
-              {subFilterFunction('restaurant', '음식점')}
-              {subFilterFunction('lodging', '숙소')}
-            </RadioGroup>
+            {headFilter === 'search' && (
+              <>
+                <Box sx={{ '& > :not(style)': { m: 1 } }}>
+                  <FormControl sx={{ width: '95%' }}>
+                    <Input
+                      id="input-with-icon-adornment"
+                      endAdornment={
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ cursor: 'pointer' }} />
+                        </InputAdornment>
+                      }
+                      sx={{
+                        background: '#eee',
+                        borderRadius: '5px',
+                        '&:before': { borderBottom: 'none !important' },
+                        '&:after': { borderBottom: 'none' },
+                      }}
+                    />
+                  </FormControl>
+                </Box>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  defaultValue="travel"
+                  sx={{ margin: '', display: 'block' }}
+                >
+                  {subFilterFunction('travel', '여행지')}
+                  {subFilterFunction('restaurant', '음식점')}
+                  {subFilterFunction('lodging', '숙소')}
+                </RadioGroup>
+              </>
+            )}
           </Box>
 
           <Grid container>
@@ -306,12 +305,7 @@ const RouteCreator = () => {
                     pb: 0.5,
                   }}
                 >
-                  <Avatar
-                    variant="rounded"
-                    src={place.firstimage}
-                    alt=""
-                    sx={{ width: 60, height: 60, mr: 1 }}
-                  />
+                  <Avatar variant="rounded" src={place.firstimage} alt="" sx={{ width: 60, height: 60, mr: 1 }} />
                   <CardContent sx={{ flexGrow: 1, p: 0, mr: 1 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                       {place.title}
@@ -380,18 +374,27 @@ const RouteCreator = () => {
                     textAlign: 'left',
                   }}
                 >
-                  <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>
-                    {myData.courseName}
-                  </h5>
+                  <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>{myData.courseName}</h5>
                 </Box>
                 <Box
                   sx={{
                     border: 'solid 1px',
-                    borderRadius: '20px 0px 0px 20px',
+                    borderRadius: '20px 10px 10px 20px',
                     padding: '1em',
                     borderColor: '#a6a6a6',
                     height: '450px',
                     overflow: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '10px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: '#2f3542',
+                      backgroundClip: 'padding-box',
+                      border: '4px solid transparent',
+                    },
+                    '& ::-webkit-scrollbar-track ': {
+                      boxShadow: 'inset 0px 0px 5px white',
+                    },
                   }}
                 >
                   {repeatRoutesSubTitle(myData.data)}
@@ -409,22 +412,8 @@ const RouteCreator = () => {
               </AnimatedGridItem>
 
               {/* 지도는 항상 표시 */}
-              <AnimatedGridItem
-                item
-                style={{ paddingTop: 0 }}
-                xs={12}
-                sm={12}
-                md={12}
-                lg={5}
-                xl={7}
-                xxl={7}
-              >
-                <KakaoMap
-                  name="location"
-                  control={control}
-                  center={myData.data}
-                  editModeData={editModeData()}
-                />
+              <AnimatedGridItem item style={{ paddingTop: 0 }} xs={12} sm={12} md={12} lg={5} xl={7} xxl={7}>
+                <KakaoMap name="location" control={control} center={myData.data} editModeData={editModeData()} />
               </AnimatedGridItem>
 
               <AnimatedGridItem item xs={12}>
