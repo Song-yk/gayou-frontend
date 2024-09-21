@@ -29,7 +29,7 @@ const Extra = () => {
       <Container>
         <Row className="mb-5">
           <Col md={5} className="d-flex flex-column justify-content-start mt-5">
-            <h1 className="fw-bold" style={{ fontSize: '90px' }}>
+            <h1 style={{ fontSize: '90px' }}>
               조금 더<br />
               알려주세유.
             </h1>

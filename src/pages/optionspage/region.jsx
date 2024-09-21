@@ -136,7 +136,7 @@ const Region = () => {
             <Container>
                 <Row className="mb-5">
                     <Col md={5} className="d-flex flex-column justify-content-start mt-5">
-                        <h1 className="fw-bold" style={{ fontSize: '90px' }}>
+                        <h1 style={{ fontSize: '90px' }}>
                             어디가세유?
                         </h1>
                     </Col>
@@ -176,7 +176,7 @@ const Region = () => {
                                 )}
                             </InputGroup>
                             <Button
-                                className="ms-2 btn-lg btn-secondary"
+                                className="ms-2 btn-lg btn-secondary fw-bold"
                                 style={{
                                     border: '1px solid black',
                                     borderRadius: '8px',
@@ -195,12 +195,14 @@ const Region = () => {
                                 <Button
                                     key={region}
                                     onClick={() => handleRegionClick(region)}
-                                    className={`m-2 btn-lg ${selectedRegion === region ? 'btn-warning' : 'btn-light'}`}
+                                    className={`m-2 btn-lg fw-bold`}
                                     style={{
                                         border: '1px solid black',
                                         borderRadius: '8px',
                                         padding: '10px 20px',
                                         minWidth: '125px',
+                                        backgroundColor: selectedRegion === region  ? '#FF7828' : '#FFCAB2',
+                                        color: selectedRegion === region  ? '#000' : '#fff',
                                     }}
                                     disabled={searchInput.trim() !== ''}
                                 >
@@ -215,12 +217,14 @@ const Region = () => {
                                     <Button
                                         key={neighborhood}
                                         onClick={() => handleNeighborhoodClick(neighborhood)}
-                                        className={`m-2 btn-lg ${selectedNeighborhoods.includes(neighborhood) ? 'btn-warning' : 'btn-light'}`}
+                                        className={`m-2 btn-lg fw-bold`}
                                         style={{
                                             border: '1px solid black',
                                             borderRadius: '8px',
                                             padding: '10px 20px',
                                             minWidth: '125px',
+                                            backgroundColor: selectedNeighborhoods.includes(neighborhood)  ? '#FF7828' : '#FFCAB2',
+                                            color: selectedNeighborhoods.includes(neighborhood)  ? '#000' : '#fff', 
                                         }}
                                     >
                                         {neighborhood}
@@ -230,8 +234,6 @@ const Region = () => {
                         )}
                     </Col>
                 </Row>
-
-                {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
                 <Button
                 className="fw-bold btn-lg m-5"
                 style={{

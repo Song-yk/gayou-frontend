@@ -38,7 +38,7 @@ const Concept = () => {
       <Container>
         <Row className="mb-5 mt-5">
           <Col className="d-flex flex-column justify-content-start">
-            <h1 className="fw-bold" style={{ fontSize: '90px' }}>
+            <h1 style={{ fontSize: '90px' }}>
               마지막이에유.<br />
               원하는 컨셉을 골라보세유.
             </h1>
@@ -46,13 +46,17 @@ const Concept = () => {
         </Row>
         <Row className="mt-3">
           <Col className="text-end">
-            <div className="d-flex flex-wrap justify-content-left">
+            <div className="d-flex flex-wrap justify-content-center">
               {concepts.map((concept) => (
                 <Button
                   key={concept}
                   onClick={() => handleConceptClick(concept)}
-                  className={`m-2 btn-lg ${selectedConcepts.includes(concept) ? 'btn-warning' : 'btn-light'}`}
-                  style={{ border: '1px solid black', borderRadius: '8px', padding: '10px 20px', minWidth: '125px' }}
+                  className={`m-3 btn-lg`}
+                  style={{ border: '1px solid black', borderRadius: '40px', padding: '10px', minWidth: '200px',
+                          backgroundColor: selectedConcepts.includes(concept)  ? '#FF7828' : '#FFF',
+                          color: '#000',
+                  }}
+                  
                 >
                   {concept}
                 </Button>

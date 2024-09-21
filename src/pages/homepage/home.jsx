@@ -20,13 +20,13 @@ const HomePage = () => {
       <Container>
         <Row className="text-center">
           <Col>
-            <p className="main-title fw-bold" style={{ fontSize: '85px', lineHeight: '1.2' }}>
+            <p className="main-title" style={{ fontSize: '85px', lineHeight: '1.2'}}>
               대전 여행 <br />
               준비 되셨나유? <br />
               그럼 <span style={{ color: '#FF7828' }}>이대로 가유~</span>
             </p>
             <Button
-              className="start-button fw-bold btn-lg mt-4 rounded-pill"
+              className="start-button btn-lg mt-4 rounded-pill"
               style={{ 
                 border: '1px solid black', 
                 padding: '10px 50px',
@@ -48,8 +48,8 @@ const HomePage = () => {
         alt="한꿈이"
         style={{
           position: 'absolute',
-          bottom: '10vh', 
-          right: '20vw', 
+          bottom: '15vh', 
+          right: '25vw', 
           width: '200px', 
           height: 'auto', 
           zIndex: -1

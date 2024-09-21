@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Nav } from 'react-bootstrap';
-import { BellFill } from 'react-bootstrap-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import defaultProfileImage from '../../assets/images/defaultProfile.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,29 +10,30 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState(["댓글이 달렸습니다."]);
   const [user, setUser] = useState('');
+  const [profileImage, setProfileImage] = useState(defaultProfileImage); 
 
-
-  const hideButtonPages = ['/', '/region', '/extra', '/concept', '/routeCreator',];
+  const hideButtonPages = ['/', '/region', '/extra', '/concept', '/routeCreator'];
   const shouldHideButton = hideButtonPages.includes(location.pathname);
-
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userName = localStorage.getItem('name');
+    const userProfileImage = localStorage.getItem('profileImage');
 
     if (token) {
       setIsLoggedIn(true);
-      setUser(userName || '사용자'); 
+      setUser(userName || '사용자');
+      setProfileImage(userProfileImage || defaultProfileImage);
     } else {
       setIsLoggedIn(false);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
-    localStorage.removeItem('name'); 
-    localStorage.removeItem('id');  
-    setIsLoggedIn(false);              
+    localStorage.removeItem('token');
+    localStorage.removeItem('name');
+    localStorage.removeItem('profileImage');
+    setIsLoggedIn(false);
   };
 
   const handleProfileClick = () => {
@@ -44,68 +45,74 @@ const Navbar = () => {
   };
 
   const goToHome = () => {
-    navigate('/'); 
+    navigate('/');
   };
 
   const goToRegion = () => {
-    navigate('/region'); 
+    navigate('/region');
   };
+
   return (
     <div className="navbar">
       <div className="h-100 w-100 d-flex align-items-center justify-content-between">
-        <img src={logo} alt="Logo" style={{ width: 'auto', height: '50px', marginLeft: '80px'}}
-        onClick={goToHome} 
-        />
+        <img src={logo} alt="Logo" style={{ width: 'auto', height: '50px', marginLeft: '80px' }} onClick={goToHome} />
 
-        <div className="d-flex align-items-center" style={{ marginRight: '80px'}}>
+        <div className="d-flex align-items-center" style={{ marginRight: '80px' }}>
           {!shouldHideButton && (
             <>
               <Button
                 className="fw-bold btn-lg m-4 btn-light rounded-pill"
-                style={{ border: '1px solid black', backgroundColor:'#F7527a', color: 'white' }}
+                style={{ border: '1px solid black', backgroundColor: '#F7527a', color: 'white' }}
                 onClick={goToRegion}
-
               >
                 AI 코스 추천
               </Button>
               <div
                 style={{
-                  width: '3px', 
-                  height: '40px', 
-                  backgroundColor: '#908f91',  
+                  width: '3px',
+                  height: '40px',
+                  backgroundColor: '#908f91',
                 }}
               />
             </>
           )}
-          
+
           {isLoggedIn ? (
             <>
-              {/* 알림 */}
-              {/* <Dropdown align="end" className="m-4">
-                <Dropdown.Toggle as={Nav.Link} id="notification-dropdown">
-                  <BellFill size={20} />
-                </Dropdown.Toggle>
+              <img
+                src={profileImage}
+                alt="Profile"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                }}
+              />
 
-                <Dropdown.Menu>
-                  {notifications.length > 0 ? (
-                    notifications.map((notification, index) => (
-                      <Dropdown.Item key={index}>
-                        {notification}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item>알림이 없습니다</Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown> */}
-
-              {/* 사용자 정보 */}
               <Dropdown align="end" className="m-4">
                 <Dropdown.Toggle variant="light" id="dropdown-basic">
                   {user}
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
+                <Dropdown.Menu className="mt-2">
+                  <Dropdown.ItemText>
+                    <div className="d-flex align-items-center">
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          marginRight: '10px',
+                        }}
+                      />
+                      <span>{user}</span>
+                    </div>
+                  </Dropdown.ItemText>
+                  <Dropdown.Divider />
                   <Dropdown.Item onClick={handleMyCourseClick}>나의 코스</Dropdown.Item>
                   <Dropdown.Item onClick={handleProfileClick}>계정 설정</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
@@ -113,11 +120,7 @@ const Navbar = () => {
               </Dropdown>
             </>
           ) : (
-            <Button
-              className="fw-bold btn-lg m-4 rounded-pill btn-light"
-              style={{ border: '1px solid black' }}
-              href="/login"
-            >
+            <Button className="fw-bold btn-lg m-4 rounded-pill btn-light" style={{ border: '1px solid black' }} href="/login">
               로그인 및 회원가입
             </Button>
           )}
