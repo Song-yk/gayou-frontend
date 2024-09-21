@@ -132,8 +132,8 @@ const Region = () => {
     };
 
     return (
-        <div className="options">
-            <Container className="min-vh-100 d-flex flex-column justify-content-start">
+        <div className="options h-100 d-flex flex-column justify-content-start">
+            <Container>
                 <Row className="mb-5">
                     <Col md={5} className="d-flex flex-column justify-content-start mt-5">
                         <h1 className="fw-bold" style={{ fontSize: '90px' }}>
@@ -182,7 +182,7 @@ const Region = () => {
                                     borderRadius: '8px',
                                     padding: '10px 20px',
                                     minWidth: '220px',
-                                    backgroundColor: selectedRegion === null ? '#FF9933' : '#FF9999',
+                                    backgroundColor: selectedRegion === null ? '#FF7828' : '#FF9999',
                                 }}
                                 onClick={() => handleRegionClick(null)}
                                 disabled={searchInput.trim() !== ''}
@@ -237,10 +237,11 @@ const Region = () => {
                 style={{
                     position: 'fixed',
                     left: '20px',
-                    bottom: '20px',
-                    backgroundColor: '#FFA500',
+                    bottom: '90px',
+                    backgroundColor: '#FF7828',
                     borderRadius: '30px',
                     border: '1px solid black',
+                    padding: '10px 40px',
                 }}
                 onClick={handleBeforeClick}
                 >
@@ -252,11 +253,13 @@ const Region = () => {
                 style={{
                     position: 'fixed',
                     right: '20px',
-                    bottom: '20px',
-                    backgroundColor: '#FFA500',
+                    bottom: '90px',
+                    backgroundColor: '#FF7828',
                     borderRadius: '30px',
                     border: '1px solid black',
+                    padding: '10px 40px',
                 }}
+                disabled={selectedNeighborhoods.length === 0}
                 onClick={handleNextClick}
                 >
                 다음

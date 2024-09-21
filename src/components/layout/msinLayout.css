@@ -1,12 +1,21 @@
-/* 전체 레이아웃 설정 */
 .main-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 전체 화면 높이 */
+  height: 100vh;
 }
 
-/* 네비바 높이를 제외한 페이지 내용 */
+.navbar {
+  height: 85px;
+  flex-shrink: 0;
+}
+
+.footer {
+  height: 85px; 
+  flex-shrink: 0;
+}
+
 .main-content {
-  height: calc(100vh - 70px); /* 전체 화면에서 네비바 높이를 뺀 나머지 영역 */
-  overflow: auto; 
+  flex: 1;
+  overflow-y: auto; 
+  min-height: calc(100vh - 85px -85px);
 }

@@ -14,6 +14,9 @@ const Region = lazy(() => import('./pages/optionspage/region'));
 const Extra = lazy(() => import('./pages/optionspage/extra'));
 const Concept = lazy(() => import('./pages/optionspage/concept'));
 
+const PrivacyPolicy = lazy(() => import('./pages/policyPage/privacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/policyPage/termsOfService'));
+
 const Login = lazy(() => import('./pages/loginpage/login'));
 const Signup = lazy(() => import('./pages/loginpage/signup'));
 const Agree = lazy(() => import('./pages/loginpage/agree'));
@@ -52,6 +55,8 @@ function App() {
             <Route path="region" element={<Region />} />
             <Route path="extra" element={<Extra />} />
             <Route path="concept" element={<Concept />} />
+            <Route path="privacyPolicy" element={<PrivacyPolicy />} />
+            <Route path="termsOfService" element={<TermsOfService />} />
             <Route path="routeCreator" element={<RouteCreate />} />
             {/* ProtectedLayout을 사용하여 보호된 페이지들을 보호 */}
             <Route element={<ProtectLayout />}>
