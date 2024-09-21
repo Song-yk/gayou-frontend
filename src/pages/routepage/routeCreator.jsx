@@ -7,7 +7,23 @@ import MyCardControls from '../../components/common/MyCardControls.jsx';
 import Grid from '@mui/material/Grid';
 import MyButton from '../../components/common/MyButton.jsx';
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import {
+  Box,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Typography,
+  Card,
+  CardContent,
+  Avatar,
+  Button,
+} from '@mui/material';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import SearchIcon from '@mui/icons-material/Search';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 const RouteCreator = () => {
   const [myData, setMyData] = useState([]);
@@ -15,6 +31,7 @@ const RouteCreator = () => {
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [places, setPlaces] = useState([]);
 
   const { control } = useForm();
 
@@ -39,6 +56,21 @@ const RouteCreator = () => {
     }
   }, []);
 
+  const fetchPlaces = async () => {
+    try {
+      const response = await axios.get('/api/flask/route/locations/');
+      console.log(response.data);
+      console.log(response.data.data);
+      setPlaces(response.data.data); // places 상태 업데이트
+    } catch (error) {
+      console.error('Failed to fetch places:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlaces(); // places 데이터를 가져옴
+  }, []);
+
   const AnimatedGridItem = styled(Grid)(({ theme }) => ({
     transition: 'all 0.2s ease',
   }));
@@ -48,7 +80,11 @@ const RouteCreator = () => {
       if (idx > 0) {
         const newItems = [...myData.data];
         [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
-        setMyData(prevData => ({ ...prevData, data: newItems }));
+        setMyData(prevData => {
+          const updatedData = { ...prevData, data: newItems };
+          sessionStorage.setItem('myData', JSON.stringify(updatedData));
+          return updatedData;
+        });
       }
     },
     [myData]
@@ -59,7 +95,11 @@ const RouteCreator = () => {
       if (idx < myData.data.length - 1) {
         const newItems = [...myData.data];
         [newItems[idx], newItems[idx + 1]] = [newItems[idx + 1], newItems[idx]];
-        setMyData(prevData => ({ ...prevData, data: newItems }));
+        setMyData(prevData => {
+          const updatedData = { ...prevData, data: newItems };
+          sessionStorage.setItem('myData', JSON.stringify(updatedData));
+          return updatedData;
+        });
       }
     },
     [myData]
@@ -68,7 +108,11 @@ const RouteCreator = () => {
   const removeCard = useCallback(
     idx => {
       const newItems = myData.data.filter((_, cardIdx) => cardIdx !== idx);
-      setMyData(prevData => ({ ...prevData, data: newItems }));
+      setMyData(prevData => {
+        const updatedData = { ...prevData, data: newItems };
+        sessionStorage.setItem('myData', JSON.stringify(updatedData));
+        return updatedData;
+      });
     },
     [myData]
   );
@@ -136,6 +180,166 @@ const RouteCreator = () => {
       setLoading(false);
     }
   };
+
+  const [headFilter, setHeadFilter] = useState('recom');
+
+  const handleDevices = (event, newDevices) => {
+    if (newDevices !== null) {
+      setHeadFilter(newDevices);
+    }
+  };
+
+  function subFilterFunction(val, label) {
+    return (
+      <FormControlLabel
+        value={val}
+        control={<Radio sx={{ '& .MuiSvgIcon-root': { fontSize: 15 } }} />}
+        label={label}
+        sx={{
+          fontSize: '14px',
+          '& .MuiFormControlLabel-label': { fontSize: '12px' },
+        }}
+      />
+    );
+  }
+
+  function myToggleBtn(val, text) {
+    return (
+      <ToggleButton
+        value={val}
+        aria-label={val}
+        sx={{
+          height: '40px',
+          border: 'none',
+          borderRadius: '25px !important',
+          backgroundColor: headFilter === val ? '#333 !important' : 'transparent',
+          color: headFilter === val ? '#fff !important' : '#000',
+          '&:hover': {
+            backgroundColor: headFilter === val ? '#333 !important' : '#f0f0f0',
+          },
+        }}
+      >
+        {text}
+      </ToggleButton>
+    );
+  }
+  const addPlaceToRoute = useCallback(
+    place => {
+      // 중복된 장소인지 확인
+      if (!myData.data.some(item => item.contentid === place.contentid)) {
+        const newItems = [...myData.data, place]; // 기존 데이터에 새로운 장소 추가
+        setMyData(prevData => {
+          const updatedData = { ...prevData, data: newItems };
+          sessionStorage.setItem('myData', JSON.stringify(updatedData)); // sessionStorage에 저장
+          return updatedData;
+        });
+      } else {
+        alert('이미 추가된 장소입니다.');
+      }
+    },
+    [myData]
+  );
+
+  function editModeData() {
+    if (!editMode) return;
+    return (
+      <div className="custom_editcontrol radius_border">
+        <Box sx={{ p: 1 }}>
+          <Box sx={{ mb: 2 }}>
+            <ToggleButtonGroup
+              value={headFilter}
+              exclusive
+              onChange={handleDevices}
+              aria-label="device"
+              sx={{
+                width: '100%',
+                '& .MuiToggleButton-root:first-child': { marginRight: '5px' },
+                ml: 1.5,
+              }}
+            >
+              {myToggleBtn('recom', '추천여행지')}
+              {myToggleBtn('search', '검색결과')}
+            </ToggleButtonGroup>
+            <Box sx={{ '& > :not(style)': { m: 1 } }}>
+              <FormControl sx={{ width: '95%' }}>
+                <Input
+                  id="input-with-icon-adornment"
+                  endAdornment={
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ cursor: 'pointer' }} />
+                    </InputAdornment>
+                  }
+                  sx={{
+                    background: '#eee',
+                    borderRadius: '5px',
+                    '&:before': { borderBottom: 'none !important' },
+                    '&:after': { borderBottom: 'none' },
+                  }}
+                />
+              </FormControl>
+            </Box>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              defaultValue="travel"
+              sx={{ margin: '', display: 'block' }}
+            >
+              {subFilterFunction('travel', '여행지')}
+              {subFilterFunction('restaurant', '음식점')}
+              {subFilterFunction('lodging', '숙소')}
+            </RadioGroup>
+          </Box>
+
+          <Grid container>
+            {places.map((place, index) => (
+              <Grid item xs={12} key={place.contentid}>
+                <Card
+                  variant=""
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    pl: 1,
+                    textAlign: 'left',
+                    borderBottom: 'inset 1px',
+                    pt: 1,
+                    pb: 0.5,
+                  }}
+                >
+                  <Avatar
+                    variant="rounded"
+                    src={place.firstimage}
+                    alt=""
+                    sx={{ width: 60, height: 60, mr: 1 }}
+                  />
+                  <CardContent sx={{ flexGrow: 1, p: 0, mr: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                      {place.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {place.addr1}
+                    </Typography>
+                  </CardContent>
+                  <Button
+                    sx={{
+                      padding: '3px 0',
+                      minWidth: '50px',
+                      border: 'solid 1px',
+                      color: 'black',
+                      fontWeight: 500,
+                    }}
+                    onClick={() => addPlaceToRoute(place)}
+                  >
+                    추가
+                  </Button>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </div>
+    );
+  }
 
   return (
     <div className="options">
@@ -219,7 +423,7 @@ const RouteCreator = () => {
                   name="location"
                   control={control}
                   center={myData.data}
-                  editMode={editMode}
+                  editModeData={editModeData()}
                 />
               </AnimatedGridItem>
 

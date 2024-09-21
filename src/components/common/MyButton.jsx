@@ -71,7 +71,7 @@ export default function MyButton(props) {
             onClick={props.onClick}
             selected
           >
-            {props.value}
+            <div style={{ fontSize: props.fontSize || '' }}>{props.value}</div>
           </Button>
         </ThemeProvider>
       )}

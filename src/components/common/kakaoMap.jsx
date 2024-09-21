@@ -195,11 +195,7 @@ function KakaoMap(props) {
               스카이뷰
             </span>
           </div>
-          {props.editMode && (
-            <div className="custom_editcontrol radius_border">
-              <Box sx={{}}>asdadsd</Box>
-            </div>
-          )}
+          {props.editModeData}
           <div className="custom_zoomcontrol radius_border">
             <span onClick={zoomIn}>
               <AddIcon alt="확대" />
