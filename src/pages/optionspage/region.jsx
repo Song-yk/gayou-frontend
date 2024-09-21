@@ -182,7 +182,7 @@ const Region = () => {
                                     borderRadius: '8px',
                                     padding: '10px 20px',
                                     minWidth: '220px',
-                                    backgroundColor: selectedRegion === null ? '#FF7828' : '#FF9999',
+                                    backgroundColor: selectedRegion === null ? '#FF7828' : '#F7527a',
                                 }}
                                 onClick={() => handleRegionClick(null)}
                                 disabled={searchInput.trim() !== ''}

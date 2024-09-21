@@ -39,7 +39,7 @@ const Extra = () => {
             <Row className="mb-4">
               <Col md={6}>
                     <div className="mb-4">
-                    <h4>나이를 선택해주새요.</h4>
+                    <h4>나이를 선택해주세요.</h4>
                     <hr/>
                     <Form.Range
                         min={0}

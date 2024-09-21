@@ -7,18 +7,22 @@ const Concept = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedConcepts, setSelectedConcepts] = useState([]);
-  
-  const { region, neighborhoods, age, gender, travelDate, isLocal} = location.state || {};
-  
+
+  const { region, neighborhoods, age, gender, travelDate, isLocal } = location.state || {};
+
   const concepts = ['빵지순례', '지역 축제', '예술/공연', '자연', '스포츠', '로컬맛집', '동네 탐험', '감성 카페', '쇼핑', '아이/반려동물'];
 
   const handleConceptClick = (concept) => {
-    setSelectedConcepts((prev) => 
-      prev.includes(concept)
-        ? prev.filter(item => item !== concept) // 선택 해제
-        : [...prev, concept] // 선택 추가
-    );
-  };
+    setSelectedConcepts((prev) => {
+      if (prev.includes(concept)) {
+        return prev.filter(item => item !== concept);
+      } else if (prev.length < 3) {
+        return [...prev, concept];
+      } else {
+        return [concept];
+      }
+    });
+  };  
 
   const handleNextClick = () => {
     console.log(region, neighborhoods, age, gender, travelDate, isLocal, selectedConcepts);
@@ -44,7 +48,7 @@ const Concept = () => {
           <Col className="text-end">
             <div className="d-flex flex-wrap justify-content-left">
               {concepts.map((concept) => (
-                <Button 
+                <Button
                   key={concept}
                   onClick={() => handleConceptClick(concept)}
                   className={`m-2 btn-lg ${selectedConcepts.includes(concept) ? 'btn-warning' : 'btn-light'}`}
@@ -56,8 +60,6 @@ const Concept = () => {
             </div>
           </Col>
         </Row>
-
-        {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
         <Button
           className="fw-bold btn-lg m-5"
           style={{
@@ -73,7 +75,6 @@ const Concept = () => {
         >
           이전
         </Button>
-
         <Button
           className="fw-bold btn-lg m-5"
           style={{
@@ -85,6 +86,7 @@ const Concept = () => {
             border: '1px solid black',
             padding: '10px 40px',
           }}
+          disabled={selectedConcepts.length !== 3}
           onClick={handleNextClick}
         >
           다음

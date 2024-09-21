@@ -38,7 +38,7 @@ const TermsOfService = () => {
       <h2 className="mt-4">7. 연락처</h2>
       <p>이용약관에 대한 문의 사항은 아래의 연락처로 문의해 주시기 바랍니다.</p>
       <ul>
-        <li><strong>이름:</strong> 조원준</li>
+        <li><strong>이름:</strong> Aivle</li>
         <li><strong>연락처:</strong> 010-6668-8725</li>
         <li><strong>이메일:</strong> wisour97@gmail.com</li>
       </ul>

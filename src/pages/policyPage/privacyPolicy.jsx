@@ -59,7 +59,7 @@ const PrivacyPolicy = () => {
       <p>회사는 개인정보 보호와 관련된 업무를 총괄하는 책임자를 두고 있습니다. 
       개인정보와 관련된 문의 사항은 아래의 연락처로 문의해 주시기 바랍니다.</p>
       <ul>
-        <li><strong>이름:</strong> 조원준</li>
+        <li><strong>이름:</strong> Aivle</li>
         <li><strong>연락처:</strong> 010-6668-8725</li>
         <li><strong>이메일:</strong> wisour97@gmail.com</li>
       </ul>

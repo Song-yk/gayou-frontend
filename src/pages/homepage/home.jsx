@@ -13,7 +13,10 @@ const HomePage = () => {
   };
 
   return (
-    <div className="home h-100 d-flex justify-content-center align-items-center position-relative">
+    <div 
+        className="home d-flex justify-content-center align-items-center position-relative"
+        style={{ minHeight: 'calc(100vh - 85px - 85px)' }}
+      >
       <Container>
         <Row className="text-center">
           <Col>

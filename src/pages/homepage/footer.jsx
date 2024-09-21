@@ -22,7 +22,7 @@ const Footer = () => {
         </Row>
         <Row>
           <Col className="text-center">
-            이대로가유(이건대전로컬가이드유) | 대표 조원준 | 개인정보보호책임자 조원준
+            이대로가유(이건대전로컬가이드유) | 대표 Aivle | 개인정보보호책임자 Aivle
           </Col>
         </Row>
         <Row>

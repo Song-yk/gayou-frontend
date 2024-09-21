@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Nav } from 'react-bootstrap';
 import { BellFill } from 'react-bootstrap-icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState(["댓글이 달렸습니다."]);
   const [user, setUser] = useState('');
+
+
+  const hideButtonPages = ['/', '/region', '/extra', '/concept', '/routeCreator',];
+  const shouldHideButton = hideButtonPages.includes(location.pathname);
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -38,20 +44,44 @@ const Navbar = () => {
   };
 
   const goToHome = () => {
-    navigate(''); 
+    navigate('/'); 
+  };
+
+  const goToRegion = () => {
+    navigate('/region'); 
   };
   return (
     <div className="navbar">
-      <div className="w-100 d-flex align-items-center justify-content-between">
+      <div className="h-100 w-100 d-flex align-items-center justify-content-between">
         <img src={logo} alt="Logo" style={{ width: 'auto', height: '50px', marginLeft: '80px'}}
         onClick={goToHome} 
         />
 
         <div className="d-flex align-items-center" style={{ marginRight: '80px'}}>
+          {!shouldHideButton && (
+            <>
+              <Button
+                className="fw-bold btn-lg m-4 btn-light rounded-pill"
+                style={{ border: '1px solid black', backgroundColor:'#F7527a', color: 'white' }}
+                onClick={goToRegion}
+
+              >
+                AI 코스 추천
+              </Button>
+              <div
+                style={{
+                  width: '3px', 
+                  height: '40px', 
+                  backgroundColor: '#908f91',  
+                }}
+              />
+            </>
+          )}
+          
           {isLoggedIn ? (
             <>
               {/* 알림 */}
-              <Dropdown align="end" className="m-4">
+              {/* <Dropdown align="end" className="m-4">
                 <Dropdown.Toggle as={Nav.Link} id="notification-dropdown">
                   <BellFill size={20} />
                 </Dropdown.Toggle>
@@ -67,7 +97,7 @@ const Navbar = () => {
                     <Dropdown.Item>알림이 없습니다</Dropdown.Item>
                   )}
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
 
               {/* 사용자 정보 */}
               <Dropdown align="end" className="m-4">
