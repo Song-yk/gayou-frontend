@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Dropdown, Nav } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import axios from 'axios';
 import defaultProfileImage from '../../assets/images/defaultProfile.png';
 
 const Navbar = () => {
@@ -10,20 +11,28 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState(["댓글이 달렸습니다."]);
   const [user, setUser] = useState('');
-  const [profileImage, setProfileImage] = useState(defaultProfileImage); 
-
+  const [username, setUsername] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
   const hideButtonPages = ['/', '/region', '/extra', '/concept', '/routeCreator'];
   const shouldHideButton = hideButtonPages.includes(location.pathname);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userName = localStorage.getItem('name');
-    const userProfileImage = localStorage.getItem('profileImage');
+    const name = localStorage.getItem('name');
+    const userid = localStorage.getItem('id');
 
     if (token) {
       setIsLoggedIn(true);
-      setUser(userName || '사용자');
-      setProfileImage(userProfileImage || defaultProfileImage);
+      setUser(name || '사용자');
+      axios.get(`/api/springboot/auth/profile?id=${userid}`)
+      .then(response => {
+        const data = response.data;
+        setUsername(data.username || '사용자');
+        setProfilePicture(data.profilePicture || defaultProfileImage);
+      })
+      .catch(error => {
+        console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+      });
     } else {
       setIsLoggedIn(false);
     }
@@ -32,7 +41,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('name');
-    localStorage.removeItem('profileImage');
+    localStorage.removeItem('id');
     setIsLoggedIn(false);
   };
 
@@ -80,7 +89,7 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               <img
-                src={profileImage}
+                src={profilePicture}
                 alt="Profile"
                 style={{
                   width: '40px',
@@ -93,14 +102,14 @@ const Navbar = () => {
 
               <Dropdown align="end" className="m-4">
                 <Dropdown.Toggle variant="light" id="dropdown-basic">
-                  {user}
+                  {username}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="mt-2">
                   <Dropdown.ItemText>
                     <div className="d-flex align-items-center">
                       <img
-                        src={profileImage}
+                        src={profilePicture}
                         alt="Profile"
                         style={{
                           width: '40px',
