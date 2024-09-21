@@ -87,6 +87,7 @@ const Navbar = () => {
                   height: '40px',
                   borderRadius: '50%',
                   objectFit: 'cover',
+                  marginLeft: '20px'
                 }}
               />
 
