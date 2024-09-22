@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
@@ -6,8 +6,6 @@ import CryptoJS from 'crypto-js';
 import { Typography, Link, Box, Grid } from '@mui/material';
 import MyInput from '../../components/common/MyInput';
 import MyButton from '../../components/common/MyButton';
-import kakaoLoginImg from '../../assets/images/kakao_login_medium_narrow.png';
-import googleLoginImg from '../../assets/images/web_light_sq_SI@1x.png';
 
 function Login() {
   const navigate = useNavigate();
@@ -24,21 +22,16 @@ function Login() {
 
   useEffect(() => {
     // 카카오 API 초기화
-    const kakaoApiKey = import.meta.env.REACT_APP_KAKAO_API_KEY;
-
+    const kakaoApiKey = import.meta.env.VITE_KAKAO_API_KEY;
     if (kakaoApiKey && !window.Kakao.isInitialized()) {
       window.Kakao.init(kakaoApiKey);
     }
   }, []);
 
   const handleKakaoLogin = () => {
-    window.Kakao.Auth.login({
-      success: function (authObj) {
-        console.log('카카오 로그인 성공:', authObj);
-      },
-      fail: function (err) {
-        console.error('카카오 로그인 실패:', err);
-      },
+    window.Kakao.Auth.authorize({
+      redirectUri: 'http://localhost:5173/auth/kakao/callback',
+      scope: 'account_email',
     });
   };
 
@@ -52,12 +45,11 @@ function Login() {
 
       const token = response.data.token;
       localStorage.setItem('token', token);
-      const expiresAt = new Date().getTime() + 3600 * 1000;
-      localStorage.setItem('expiresAt', expiresAt);
+      const name = response.data.name;
+      localStorage.setItem('name', name);
+
       const id = response.data.userId;
       localStorage.setItem('id', id);
-      const name = response.data.username;
-      localStorage.setItem('name', name);
 
       const redirectPath = searchParams.get('redirect') || '/';
       navigate(redirectPath);
@@ -81,7 +73,7 @@ function Login() {
       </Typography>
       <Typography variant="body1" gutterBottom>
         아직 회원이 아니세요?{' '}
-        <Link href="/signup" style={{ color: 'pink', textDecoration: 'none' }}>
+        <Link href="/agree" style={{ color: 'pink', textDecoration: 'none' }}>
           간편 회원가입
         </Link>
       </Typography>
@@ -106,15 +98,12 @@ function Login() {
         <Grid container justifyContent="center" spacing={2} sx={{ mt: 2 }}>
           <Grid item>
             <img
-              src={kakaoLoginImg}
+              src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
               alt="카카오 로그인 버튼"
-              width={'150'}
               style={{ cursor: 'pointer' }}
+              width="150"
               onClick={handleKakaoLogin}
             />
-          </Grid>
-          <Grid item>
-            <img src={googleLoginImg} alt="구글 로그인 버튼" width={'150'} />
           </Grid>
         </Grid>
       </Box>

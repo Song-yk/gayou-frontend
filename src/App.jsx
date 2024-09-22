@@ -18,9 +18,11 @@ const PrivacyPolicy = lazy(() => import('./pages/policyPage/privacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/policyPage/termsOfService'));
 
 const Login = lazy(() => import('./pages/loginpage/login'));
-const Signup = lazy(() => import('./pages/loginpage/signup'));
 const Agree = lazy(() => import('./pages/loginpage/agree'));
 const Join = lazy(() => import('./pages/loginpage/join'));
+
+const KakaoCallback = lazy(() => import('./pages/auth/kakaoCallback'));
+
 const Profile = lazy(() => import('./pages/loginpage/profile'));
 const Passwordchange = lazy(() => import('./pages/loginpage/passwordchange'));
 
@@ -31,7 +33,6 @@ const Postlist = lazy(() => import('./pages/coursepost/postlist'));
 const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
 const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
-const Test = lazy(() => import('./pages/myPage/test'));
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
 const SaveCourse = lazy(() => import('./pages/myPage/saveCourse'));
 
@@ -45,10 +46,11 @@ function App() {
           {/* AuthLayout 사용 */}
           <Route element={<AuthLayout />}>
             <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Signup />} />
             <Route path="agree" element={<Agree />} />
             <Route path="join" element={<Join />} />
           </Route>
+
+          <Route path="auth/kakao/callback" element={<KakaoCallback />} />
 
           <Route path="/" element={<MainLayout />}>
             <Route path="" element={<Home />} />
