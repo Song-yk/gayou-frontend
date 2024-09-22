@@ -12,11 +12,10 @@ body {
 @font-face {
   font-family: 'SeoulHangang CM-BL';
   src: url('./assets/fonts/SeoulHangang CM-BL.ttf') format('truetype');
-  font-weight: black; 
+  font-weight: black;
   font-style: normal;
 }
 
 body {
   font-family: 'SeoulHangang CM-BL', sans-serif;
 }
-

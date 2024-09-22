@@ -336,114 +336,112 @@ const RouteCreator = () => {
   }
 
   return (
-    <div className="options">
-      <div style={{ textAlign: '-webkit-center' }}>
-        {loading ? (
-          <div>
-            <h1 className="main-title fw-bold">
-              이대로 가유가 <br />
-              AI 동네투어를 생성중이에유. <br />
-            </h1>
-          </div>
-        ) : myData.day > 0 ? (
-          <Box sx={{ width: '80%' }}>
-            <Grid container spacing={3}>
-              <AnimatedGridItem item xs={12}>
-                <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
-              </AnimatedGridItem>
-              <AnimatedGridItem
-                item
-                xs
+    <div style={{ textAlign: '-webkit-center', marginBottom: '2em' }}>
+      {loading ? (
+        <div>
+          <h1 className="main-title fw-bold">
+            이대로 가유가 <br />
+            AI 동네투어를 생성중이에유. <br />
+          </h1>
+        </div>
+      ) : myData.day > 0 ? (
+        <Box sx={{ width: '80%' }}>
+          <Grid container spacing={3}>
+            <AnimatedGridItem item xs={12}>
+              <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
+            </AnimatedGridItem>
+            <AnimatedGridItem
+              item
+              xs
+              sx={{
+                border: 'solid 1px',
+                borderRadius: '20px',
+                padding: '2em',
+                borderColor: '#a6a6a6',
+              }}
+            >
+              <Box>
+                <h3 style={{ textAlign: 'left', fontWeight: 'bold' }}>코스명</h3>
+              </Box>
+              <Box
                 sx={{
                   border: 'solid 1px',
                   borderRadius: '20px',
-                  padding: '2em',
                   borderColor: '#a6a6a6',
+                  paddingLeft: '1em',
+                  marginBottom: '2em',
+                  textAlign: 'left',
                 }}
               >
-                <Box>
-                  <h3 style={{ textAlign: 'left', fontWeight: 'bold' }}>코스명</h3>
-                </Box>
-                <Box
-                  sx={{
-                    border: 'solid 1px',
-                    borderRadius: '20px',
-                    borderColor: '#a6a6a6',
-                    paddingLeft: '1em',
-                    marginBottom: '2em',
-                    textAlign: 'left',
-                  }}
-                >
-                  <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>{myData.courseName}</h5>
-                </Box>
-                <Box
-                  sx={{
-                    border: 'solid 1px',
-                    borderRadius: '20px 10px 10px 20px',
-                    padding: '1em',
-                    borderColor: '#a6a6a6',
-                    height: '450px',
-                    overflow: 'auto',
-                    '&::-webkit-scrollbar': {
-                      width: '10px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: '#2f3542',
-                      backgroundClip: 'padding-box',
-                      border: '4px solid transparent',
-                    },
-                    '& ::-webkit-scrollbar-track ': {
-                      boxShadow: 'inset 0px 0px 5px white',
-                    },
-                  }}
-                >
-                  {repeatRoutesSubTitle(myData.data)}
-                </Box>
-                <Box sx={{ textAlign: 'right' }}>
-                  <MyButton
-                    width="25%"
-                    name="route"
-                    control={control}
-                    color="rosePink"
-                    value="일정 편집하기"
-                    onClick={toggleEditMode}
-                  />
-                </Box>
-              </AnimatedGridItem>
+                <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>{myData.courseName}</h5>
+              </Box>
+              <Box
+                sx={{
+                  border: 'solid 1px',
+                  borderRadius: '20px 10px 10px 20px',
+                  padding: '1em',
+                  borderColor: '#a6a6a6',
+                  height: '450px',
+                  overflow: 'auto',
+                  '&::-webkit-scrollbar': {
+                    width: '10px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#2f3542',
+                    backgroundClip: 'padding-box',
+                    border: '4px solid transparent',
+                  },
+                  '& ::-webkit-scrollbar-track ': {
+                    boxShadow: 'inset 0px 0px 5px white',
+                  },
+                }}
+              >
+                {repeatRoutesSubTitle(myData.data)}
+              </Box>
+              <Box sx={{ textAlign: 'right' }}>
+                <MyButton
+                  width="25%"
+                  name="route"
+                  control={control}
+                  color="rosePink"
+                  value="일정 편집하기"
+                  onClick={toggleEditMode}
+                />
+              </Box>
+            </AnimatedGridItem>
 
-              {/* 지도는 항상 표시 */}
-              <AnimatedGridItem item style={{ paddingTop: 0 }} xs={12} sm={12} md={12} lg={5} xl={7} xxl={7}>
-                <KakaoMap name="location" control={control} center={myData.data} editModeData={editModeData()} />
-              </AnimatedGridItem>
+            {/* 지도는 항상 표시 */}
+            <AnimatedGridItem item style={{ paddingTop: 0 }} xs={12} sm={12} md={12} lg={5} xl={7} xxl={7}>
+              <KakaoMap name="location" control={control} center={myData.data} editModeData={editModeData()} />
+            </AnimatedGridItem>
 
-              <AnimatedGridItem item xs={12}>
-                <Box sx={{ textAlign: 'right' }}>
-                  <MyButton
-                    width="10%"
-                    name="route"
-                    control={control}
-                    color="rosePink"
-                    value="코스 저장하기"
-                    onClick={saveCourse}
-                  />
-                  <MyButton
-                    width="10%"
-                    name="route"
-                    control={control}
-                    color="sunsetOrange"
-                    value="다시 추천 받기"
-                    onClick={retryRec}
-                  />
-                </Box>
-              </AnimatedGridItem>
-            </Grid>
-          </Box>
-        ) : (
-          <div>
-            <h1 className="main-title fw-bold">No myData found.</h1>
-          </div>
-        )}
-      </div>
+            <AnimatedGridItem item xs={12}>
+              <Box sx={{ textAlign: 'right' }}>
+                <MyButton
+                  width="10%"
+                  name="route"
+                  control={control}
+                  color="rosePink"
+                  value="코스 저장하기"
+                  onClick={saveCourse}
+                />
+                <MyButton
+                  width="10%"
+                  name="route"
+                  control={control}
+                  color="sunsetOrange"
+                  value="다시 추천 받기"
+                  onClick={retryRec}
+                />
+              </Box>
+            </AnimatedGridItem>
+          </Grid>
+        </Box>
+      ) : (
+        <div>
+          <h1 className="main-title fw-bold">No myData found.</h1>
+        </div>
+      )}
     </div>
   );
 };
