@@ -9,40 +9,41 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [notifications, setNotifications] = useState(["댓글이 달렸습니다."]);
+  const [notifications, setNotifications] = useState(['댓글이 달렸습니다.']);
   const [user, setUser] = useState('');
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const hideButtonPages = ['/', '/region', '/extra', '/concept', '/routeCreator'];
   const shouldHideButton = hideButtonPages.includes(location.pathname);
 
-  useEffect(() => {
+  const GetData = async () => {
     const token = localStorage.getItem('token');
-    const name = localStorage.getItem('name');
-    const userid = localStorage.getItem('id');
-
     if (token) {
-      setIsLoggedIn(true);
-      setUser(name || '사용자');
-      axios.get(`/api/springboot/auth/profile?id=${userid}`)
-      .then(response => {
+      try {
+        const response = await axios.get('/api/springboot/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const data = response.data;
         setUsername(data.username || '사용자');
         setProfilePicture(data.profilePicture || defaultProfileImage);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('프로필 정보를 가져오는 중 오류 발생:', error);
-      });
+      }
     } else {
       setIsLoggedIn(false);
     }
+  };
+
+  useEffect(() => {
+    GetData();
+    setIsLoggedIn(true);
+    setUser(name || '사용자');
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('name');
-    localStorage.removeItem('id');
     setIsLoggedIn(false);
+    navigate('/');
   };
 
   const handleProfileClick = () => {
@@ -50,7 +51,7 @@ const Navbar = () => {
   };
 
   const handleMyCourseClick = () => {
-    navigate('/MyCourse');
+    navigate('/myCourse');
   };
 
   const goToHome = () => {
@@ -96,7 +97,7 @@ const Navbar = () => {
                   height: '40px',
                   borderRadius: '50%',
                   objectFit: 'cover',
-                  marginLeft: '20px'
+                  marginLeft: '20px',
                 }}
               />
 
@@ -130,7 +131,11 @@ const Navbar = () => {
               </Dropdown>
             </>
           ) : (
-            <Button className="fw-bold btn-lg m-4 rounded-pill btn-light" style={{ border: '1px solid black' }} href="/login">
+            <Button
+              className="fw-bold btn-lg m-4 rounded-pill btn-light"
+              style={{ border: '1px solid black' }}
+              href="/login"
+            >
               로그인 및 회원가입
             </Button>
           )}
