@@ -25,9 +25,9 @@ const RouteCreator = () => {
 
   const { control } = useForm();
 
-  const GetData = async () => {
+  const GetData = async params => {
     try {
-      const response = await axios.get('/api/flask/route/locations/');
+      const response = await axios.post('/api/flask/route/locations/', params);
       setMyData(response.data);
       sessionStorage.setItem('myData', JSON.stringify(response.data));
     } catch (error) {
@@ -38,19 +38,26 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
-    const { region, travelDate, selectedConcepts } = location.state || {};
-    if (!region) return navigate('/region');
-    if (!travelDate) return navigate('/extra');
-    if (!selectedConcepts) return navigate('/concept');
+    const { region, neighborhoods, selectedConcepts } = location.state || {};
+    const params = {
+      region: region,
+      neighborhoods: neighborhoods,
+      selectedConcepts: selectedConcepts,
+    };
 
-    const storedData = sessionStorage.getItem('myData');
-    if (storedData) {
-      setMyData(JSON.parse(storedData));
-      setLoading(false);
-    } else {
-      GetData();
-    }
-  }, []);
+    GetData(params);
+    // if (!region) return navigate('/region');
+    // if (!travelDate) return navigate('/extra');
+    // if (!selectedConcepts) return navigate('/concept');
+
+    // const storedData = sessionStorage.getItem('myData');
+    // if (storedData) {
+    //   setMyData(JSON.parse(storedData));
+    //   setLoading(false);
+    // } else {
+    //   GetData(region, travelDate, selectedConcepts);
+    // }
+  }, [location.state]);
 
   const fetchPlaces = async () => {
     try {
