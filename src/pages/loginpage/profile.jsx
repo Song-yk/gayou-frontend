@@ -89,7 +89,7 @@ function Profile() {
         </ul>
       </div>
 
-      <div className="main-content">
+      <div className="profile-main-content">
         <div className="profile-picture-section">
           <div className="profile-picture">
             <img src={profilePicture || defaultProfileImage} alt="Profile" className="profile-image" />

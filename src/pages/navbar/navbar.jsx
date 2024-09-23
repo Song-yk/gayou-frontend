@@ -65,7 +65,12 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="h-100 w-100 d-flex align-items-center justify-content-between">
-        <img src={logo} alt="Logo" style={{ width: 'auto', height: '50px', marginLeft: '80px' }} onClick={goToHome} />
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ width: 'auto', height: '50px', marginLeft: '80px', cursor: 'pointer' }}
+          onClick={goToHome}
+        />
 
         <div className="d-flex align-items-center" style={{ marginRight: '80px' }}>
           {!shouldHideButton && (
