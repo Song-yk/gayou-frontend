@@ -38,25 +38,24 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
-    const { region, neighborhoods, selectedConcepts } = location.state || {};
-    const params = {
-      region: region,
-      neighborhoods: neighborhoods,
-      selectedConcepts: selectedConcepts,
-    };
+    const { region, neighborhoods, travelDate, selectedConcepts } = location.state || {};
 
-    GetData(params);
-    // if (!region) return navigate('/region');
-    // if (!travelDate) return navigate('/extra');
-    // if (!selectedConcepts) return navigate('/concept');
+    if (!region) return navigate('/region');
+    if (!travelDate) return navigate('/extra');
+    if (!selectedConcepts) return navigate('/concept');
 
-    // const storedData = sessionStorage.getItem('myData');
-    // if (storedData) {
-    //   setMyData(JSON.parse(storedData));
-    //   setLoading(false);
-    // } else {
-    //   GetData(region, travelDate, selectedConcepts);
-    // }
+    const storedData = sessionStorage.getItem('myData');
+    if (storedData) {
+      setMyData(JSON.parse(storedData));
+      setLoading(false);
+    } else {
+      const params = {
+        region: region,
+        neighborhoods: neighborhoods,
+        selectedConcepts: selectedConcepts,
+      };
+      GetData(params);
+    }
   }, [location.state]);
 
   const fetchPlaces = async () => {

@@ -45,11 +45,6 @@ function Login() {
 
       const token = response.data.token;
       localStorage.setItem('token', token);
-      const name = response.data.name;
-      localStorage.setItem('name', name);
-
-      const id = response.data.userId;
-      localStorage.setItem('id', id);
 
       const redirectPath = searchParams.get('redirect') || '/';
       navigate(redirectPath);
