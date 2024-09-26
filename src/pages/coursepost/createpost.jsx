@@ -28,7 +28,9 @@ const PostForm = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
+        console.log(response.data);
         setTitle(response.data.courseName);
+
       } catch (error) {
         console.error('Error fetching data from the database:', error);
       } finally {
@@ -96,12 +98,6 @@ const PostForm = () => {
               <div>
                 <TagManager />
               </div>
-              {/* <input
-                className="tag form-control form-control-sm"
-                placeholder="#태그 입력하기"
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-              /> */}
               <CKEditor
                 editor={ClassicEditor}
                 data=""
