@@ -22,12 +22,19 @@ const RouteCreator = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [places, setPlaces] = useState([]);
+  const { region, neighborhoods, travelDate, selectedConcepts } = location.state || {};
+  const [params, setParams] = useState({
+    region: region,
+    neighborhoods: neighborhoods,
+    selectedConcepts: selectedConcepts,
+    rec: 1,
+  });
 
   const { control } = useForm();
 
-  const GetData = async params => {
+  const GetData = async () => {
     try {
-      const response = await axios.post('/api/flask/route/locations/', params);
+      const response = await axios.get('/api/flask/route/locations/', { params });
       setMyData(response.data);
       sessionStorage.setItem('myData', JSON.stringify(response.data));
     } catch (error) {
@@ -38,8 +45,6 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
-    const { region, neighborhoods, travelDate, selectedConcepts } = location.state || {};
-
     if (!region) return navigate('/region');
     if (!travelDate) return navigate('/extra');
     if (!selectedConcepts) return navigate('/concept');
@@ -49,19 +54,15 @@ const RouteCreator = () => {
       setMyData(JSON.parse(storedData));
       setLoading(false);
     } else {
-      const params = {
-        region: region,
-        neighborhoods: neighborhoods,
-        selectedConcepts: selectedConcepts,
-      };
-      GetData(params);
+      GetData();
     }
   }, [location.state]);
 
   const fetchPlaces = async () => {
     try {
-      const response = await axios.get('/api/flask/route/locations/');
-      setPlaces(response.data.data);
+      const response = await axios.get('/api/flask/route/locations/sort/', { params });
+      console.log(response.data);
+      setPlaces(response.data);
     } catch (error) {
       console.error('Failed to fetch places:', error);
     }
@@ -164,9 +165,11 @@ const RouteCreator = () => {
   };
 
   const retryRec = async () => {
+    setParams({ ...params, rec: params.rec + 1 });
     setLoading(true);
+    console.log(params);
     try {
-      const response = await axios.get('/api/flask/route/locations/');
+      const response = await axios.get('/api/flask/route/locations/', { params });
 
       if (response.status === 200) {
         setMyData(response.data);
@@ -296,7 +299,7 @@ const RouteCreator = () => {
             )}
           </Box>
 
-          <Grid container>
+          <Grid container style={{ maxHeight: headFilter === 'search' ? '490px' : '570px' }}>
             {places.map((place, index) => (
               <Grid item xs={12} key={place.contentid}>
                 <Card
@@ -350,7 +353,7 @@ const RouteCreator = () => {
             AI 동네투어를 생성중이에유. <br />
           </h1>
         </div>
-      ) : myData.day > 0 ? (
+      ) : myData.data.length > 0 ? (
         <Box sx={{ width: '80%' }}>
           <Grid container spacing={3}>
             <AnimatedGridItem item xs={12}>
