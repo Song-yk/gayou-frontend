@@ -182,3 +182,72 @@ input::-webkit-inner-spin-button {
 .auth-container {
   height: 100%;
 }
+
+.ck-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.ck-content::-webkit-scrollbar-thumb {
+  background-color: #2f3542;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+}
+
+.ck-content::-webkit-scrollbar-track {
+  box-shadow: inset 0px 0px 5px white;
+}
+
+.create-text-center {
+  padding-top: 1em;
+}
+
+.create-text-center > div.col {
+  overflow-y: auto;
+  height: 47em;
+  padding: 1em;
+  margin-bottom: 1em;
+  border: #999 solid 1px;
+  border-radius: 10px;
+}
+
+.create-text-center > div.col::-webkit-scrollbar {
+  width: 10px;
+}
+.create-text-center > div.col::-webkit-scrollbar-thumb {
+  background-color: #2f3542;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+}
+.create-text-center > div.col::-webkit-scrollbar-track {
+  box-shadow: inset 0px 0px 5px white;
+}
+
+.ck-content {
+  height: 480px;
+}
+
+.ck-content > p {
+  margin: 0 !important;
+}
+
+.tags-list {
+  border: none !important;
+  height: 60px;
+  overflow-y: auto;
+}
+
+.tags-list::-webkit-scrollbar {
+  width: 10px;
+}
+.tags-list::-webkit-scrollbar-thumb {
+  background-color: #2f3542;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+}
+.tags-list::-webkit-scrollbar-track {
+  box-shadow: inset 0px 0px 5px white;
+}
+
+.tags-list > li {
+  height: fit-content;
+}
