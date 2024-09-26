@@ -359,38 +359,14 @@ const RouteCreator = () => {
             <AnimatedGridItem item xs={12}>
               <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
             </AnimatedGridItem>
-            <AnimatedGridItem
-              item
-              xs
-              sx={{
-                border: 'solid 1px',
-                borderRadius: '20px',
-                padding: '2em',
-                borderColor: '#a6a6a6',
-              }}
-            >
-              <Box>
-                <h3 style={{ textAlign: 'left', fontWeight: 'bold' }}>코스명</h3>
-              </Box>
-              <Box
-                sx={{
-                  border: 'solid 1px',
-                  borderRadius: '20px',
-                  borderColor: '#a6a6a6',
-                  paddingLeft: '1em',
-                  marginBottom: '2em',
-                  textAlign: 'left',
-                }}
-              >
-                <h5 style={{ margin: '5px 0', fontWeight: 'bold' }}>{myData.courseName}</h5>
-              </Box>
+            <AnimatedGridItem item xs>
               <Box
                 sx={{
                   border: 'solid 1px',
                   borderRadius: '20px 10px 10px 20px',
                   padding: '1em',
                   borderColor: '#a6a6a6',
-                  height: '450px',
+                  height: '593px',
                   overflow: 'auto',
                   '&::-webkit-scrollbar': {
                     width: '10px',
