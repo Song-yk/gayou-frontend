@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -6,18 +6,16 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import TagManager from '../../components/common/TagManager.jsx';
+
 const PostForm = () => {
-  // State to store form data
   const [myData, setMyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');
   const [tag, setTag] = useState([]);
   const [content, setContent] = useState('');
   const navigate = useNavigate();
-  // State for data fetched from the database
   const [searchParams] = useSearchParams();
 
-  // Fetch location, distance, and eximg from the database
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -28,9 +26,7 @@ const PostForm = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
-        console.log(response.data);
         setTitle(response.data.courseName);
-
       } catch (error) {
         console.error('Error fetching data from the database:', error);
       } finally {
@@ -39,9 +35,8 @@ const PostForm = () => {
     };
 
     fetchData();
-  }, [searchParams]); // searchParams를 dependency array에 추가
+  }, [searchParams]);
 
-  // Function to handle form submission
   const handleSubmit = async () => {
     const token = localStorage.getItem('token');
     const id = searchParams.get('id');
@@ -61,7 +56,6 @@ const PostForm = () => {
       navigate('/postlist');
     } catch (error) {
       console.error('There was an error creating the post!', error);
-
     }
   };
 
@@ -79,24 +73,23 @@ const PostForm = () => {
       />
     ));
   }
+
   return (
     <div className="home">
-      {loading ? (<></>
+      {loading ? (
+        <></>
       ) : myData ? (
         <Container className="align-items-center min-vh-100">
-          <Row className="text-center">
-            <Col>
+          <Row className="text-center create-text-center">
+            <Col className="col-12 col-sm-12 col-md-12 col-lg-6">
               <input
                 className="title form-control form-control-lg"
                 value={title}
-                placeholder='코스 이름'
-                onChange={(e) => setTitle(e.target.value)}
+                placeholder="코스 이름"
+                onChange={e => setTitle(e.target.value)}
               />
-              <pre className="text-start text-muted small mt-1">
-                {myData.town} | 코스 총 거리 {myData.totDistance}km
-              </pre>
               <div>
-                <TagManager />
+                <TagManager tags={tag} setTags={setTag} />
               </div>
               <CKEditor
                 editor={ClassicEditor}
@@ -109,18 +102,14 @@ const PostForm = () => {
                   setContent(data);
                 }}
               />
-              {repeatRoutesSubTitle(myData.data)}
             </Col>
+            <Col className="">{repeatRoutesSubTitle(myData.data)}</Col>
           </Row>
           <div className="col-12 d-flex justify-content-end">
-            <Button
-              className="fw-bold btn-lg mt-4 rounded-pill btn-warning"
-              onClick={handleSubmit}
-            >
+            <Button className="fw-bold btn-lg rounded-pill btn-warning" onClick={handleSubmit}>
               저장
             </Button>
           </div>
-
         </Container>
       ) : (
         <></>
@@ -128,6 +117,5 @@ const PostForm = () => {
     </div>
   );
 };
-
 
 export default PostForm;
