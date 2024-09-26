@@ -1,0 +1,184 @@
+.loadingTag {
+  height: 100%;
+  align-content: center;
+}
+
+.map_wrap {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.radius_border {
+  border: 1px solid #919191;
+  border-radius: 5px;
+}
+
+.custom_daycontrol {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  overflow: hidden;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  font-size: 12px;
+  box-sizing: content-box;
+}
+.custom_daycontrol span {
+  display: block;
+  width: 65px;
+  height: 30px;
+  float: left;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.custom_daycontrol .custom_type_btn {
+  background: #fff;
+  background: linear-gradient(#fff, #e6e6e6);
+}
+.custom_daycontrol .custom_type_btn:hover {
+  background: #f5f5f5;
+  background: linear-gradient(#f5f5f5, #e3e3e3);
+}
+.custom_daycontrol .custom_type_btn:active {
+  background: #e6e6e6;
+  background: linear-gradient(#e6e6e6, #fff);
+}
+.custom_daycontrol .selected_btn {
+  color: #fff;
+  background: #425470;
+  background: linear-gradient(#425470, #5b6d8a);
+}
+.custom_daycontrol .selected_btn:hover {
+  color: #fff;
+}
+
+.custom_typecontrol {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  overflow: hidden;
+  width: 130px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  font-size: 12px;
+  box-sizing: content-box;
+}
+
+.custom_typecontrol span {
+  display: block;
+  width: 65px;
+  height: 30px;
+  float: left;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.custom_typecontrol .custom_type_btn {
+  background: #fff;
+  background: linear-gradient(#fff, #e6e6e6);
+}
+
+.custom_typecontrol .custom_type_btn:hover {
+  background: #f5f5f5;
+  background: linear-gradient(#f5f5f5, #e3e3e3);
+}
+
+.custom_typecontrol .custom_type_btn:active {
+  background: #e6e6e6;
+  background: linear-gradient(#e6e6e6, #fff);
+}
+
+.custom_typecontrol .selected_btn {
+  color: #fff;
+  background: #425470;
+  background: linear-gradient(#425470, #5b6d8a);
+}
+
+.custom_typecontrol .selected_btn:hover {
+  color: #fff;
+}
+
+.custom_zoomcontrol {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  width: 36px;
+  overflow: hidden;
+  z-index: 1;
+  background-color: #f5f5f5;
+}
+
+.custom_zoomcontrol span {
+  display: block;
+  width: 36px;
+  text-align: center;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.custom_zoomcontrol span:first-child {
+  border-bottom: 1px solid #bfbfbf;
+}
+
+.custom_editcontrol {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 350px;
+  overflow: hidden;
+  z-index: 1;
+  background-color: #fff;
+  height: 650px;
+}
+.custom_editcontrol div.MuiGrid-container {
+  /* max-height: 490px; */
+  overflow-y: auto;
+}
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar {
+  width: 10px;
+}
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar-thumb {
+  background-color: #2f3542;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+}
+.custom_editcontrol div.MuiGrid-container::-webkit-scrollbar-track {
+  box-shadow: inset 0px 0px 5px white;
+}
+
+.MuiCardContent-root {
+  width: inherit;
+}
+
+input::-webkit-inner-spin-button {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.auth-box {
+  height: 100%;
+  align-content: center;
+}
+
+.MuiOutlinedInput-input {
+  padding: 10px !important;
+}
+.verificationEmailBtn {
+  top: 10px !important;
+}
+
+.authentication-btn {
+  margin-top: 0px !important;
+}
+
+.auth-container {
+  height: 100%;
+}
