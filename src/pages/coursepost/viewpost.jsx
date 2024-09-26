@@ -65,9 +65,6 @@ const HomePage = () => {
       </div>
     );
   };
-  let 댓글 = 10;
-  let username = '히타민';
-  let 댓글시간 = '2024년 8월 15일';
   const update = 'https://github.com/user-attachments/assets/e7977ac6-0db7-40a7-b18d-b20dfdd5f8bb';
   const [save, usesave] = useState('https://ifh.cc/g/OTp81P.png');
   const share = 'https://github.com/user-attachments/assets/c2381a16-4bde-4b7a-81ae-c668330f88c8';
@@ -105,7 +102,6 @@ const HomePage = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <span style={{ fontSize: '30px' }}>❤️</span>
-                  <span style={{ fontSize: '30px' }}>👁️</span>
                 </div>
                 <div>
                   <span>
@@ -127,7 +123,7 @@ const HomePage = () => {
               {repeatRoutesSubTitle(myData.data)}
               <div className="my-3 d-flex justify-content-between align-items-center">
                 <span className="font-weight-light">
-                  🗨️ {댓글} 개
+                  🗨️  개
                 </span>
                 <div>
                   <select value={sortOption} onChange={handleChange}>
@@ -148,7 +144,7 @@ const HomePage = () => {
                   <div className="d-flex flex-column" style={{
                     width: '94%'
                   }}>
-                    <h6 className="text-start">{username}{댓글시간}</h6>
+                    <h6 className="text-start"></h6>
 
                     <input style={{ border: '1px solid gray', minHeight: '100px' }} placeholder='댓글을 작성해봐유' />
                   </div>
