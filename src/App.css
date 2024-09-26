@@ -138,7 +138,7 @@
   height: 650px;
 }
 .custom_editcontrol div.MuiGrid-container {
-  max-height: 490px;
+  /* max-height: 490px; */
   overflow-y: auto;
 }
 .custom_editcontrol div.MuiGrid-container::-webkit-scrollbar {
