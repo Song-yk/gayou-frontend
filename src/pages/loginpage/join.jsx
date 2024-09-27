@@ -44,8 +44,7 @@ function Join() {
 
       // 현재 연도를 기준으로 YY를 YYYY로 변환
       const currentYear = new Date().getFullYear();
-      const fullYear =
-        year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
+      const fullYear = year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
 
       // 변환된 날짜를 YYYY-MM-DD 00:00:00.000000 형식으로 만들기
       const formattedBirthday = `${fullYear}-${month}-${day}`;
@@ -246,8 +245,7 @@ function Join() {
               },
               pattern: {
                 value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-                message:
-                  '비밀번호는 영문, 숫자, 특수문자를 포함하여 8자리 이상이어야 합니다.',
+                message: '비밀번호는 영문, 숫자, 특수문자를 포함하여 8자리 이상이어야 합니다.',
               },
             }}
           />
@@ -261,8 +259,7 @@ function Join() {
             control={control}
             rules={{
               required: '비밀번호 확인은 필수 항목입니다.',
-              validate: value =>
-                value === getValues('password') || '비밀번호가 일치하지 않습니다.',
+              validate: value => value === getValues('password') || '비밀번호가 일치하지 않습니다.',
             }}
           />
         </Box>
