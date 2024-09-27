@@ -1,38 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
-import Lists from '../../components/common/lists.jsx';
+import PostCard from '../../components/common/PostCard';
+import defaultProfile from '../../assets/images/defaultProfile.png';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import CircularProgress from '@mui/material/CircularProgress';
+import Avatar from '@mui/material/Avatar';
 
-const HomePage = () => {
-  const [myData, setMyData] = useState(null); // 초기값을 null로 설정
+const Postlist = () => {
+  const [myData, setMyData] = useState();
   const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState('');
-  const [tag, setTag] = useState([]);
-  const [content, setContent] = useState('');
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate(); // 필요 시 사용
+  const navigate = useNavigate();
   const areas = ['전체', '유성구', '대덕구', '서구', '중구', '동구'];
   const tags = [
-    '자연', '관광지', '문화시설', '스포츠', '역사',
-    '체험', '음식', '카페', '쇼핑', '빵지순례',
-    '로컬 맛집', '지역축제', '예술/공연', '동네탐험',
-    '반려동물', '아이',
+    '자연',
+    '관광지',
+    '문화시설',
+    '스포츠',
+    '역사',
+    '체험',
+    '음식',
+    '카페',
+    '쇼핑',
+    '빵지순례',
+    '로컬 맛집',
+    '지역축제',
+    '예술/공연',
+    '동네탐험',
+    '반려동물',
+    '아이',
   ];
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
-      const id = searchParams.get('id');
       try {
-        const response = await axios.get('/api/springboot/route/data', {
-          params: { id },
+        const response = await axios.get('/api/springboot/route/datas', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setMyData(response.data);
         console.log(response.data);
-        console.log(response.data.totlike);
-        setTitle(response.data.courseName);
-
+        setMyData(response.data);
       } catch (error) {
         console.error('Error fetching data from the database:', error);
       } finally {
@@ -44,81 +56,93 @@ const HomePage = () => {
   }, [searchParams]);
 
   return (
-    <div className="home">
-      {loading ? (<p>Loading...</p>  // 로딩 메시지 추가
+    <Box className="home" sx={{ padding: '20px' }}>
+      {loading ? (
+        <CircularProgress />
       ) : myData ? (
-        <Container>
-          <Row className="text-center">
-            <Col>
-              <div className='mt-5' style={{ display: 'grid', gridTemplateColumns: '1fr 275px', gap: '5px' }}>
-                <div>
-                  <Lists
-                    user='히타민'
-                    image={myData.data}
-                    title={myData.courseName}
-                    town={myData.town}
-                    distance={myData.totDistance}
-                    content={myData.content}
-                    tag={myData.tag}
-                    like={myData.totlike}
-                  />
-                </div>
-                <div className='ms-3'>
-                  <p className='m-3 fw-bold btn-lg mt-4 rounded-pill'>
-                    카테고리를 선택해 보세유!
-                  </p><hr></hr>
-                  <div>
-                    <div className='text-center'>
-                      {areas.map((area) => (
-                        <Options key={area} named={area} />
-                      ))}
-                    </div>
-                    <hr />
-                    <div>
-                      {tags.map((tag) => (
-                        <Options key={tag} named={tag} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Container >
+        <Grid container justifyContent="center">
+          <Grid item xs={12} md={8}>
+            <Box mt={5} sx={{ display: 'grid', gridTemplateColumns: '1fr 275px', gap: '5px' }}>
+              <Box sx={{ border: 'solid 1px #aaa', borderRadius: '15px', padding: '1em' }}>
+                {myData.map((data, index) => (
+                  <Box key={index} sx={{ borderBottom: 'solid 1px #ddd', marginBottom: '1em' }}>
+                    <Box display="flex" alignItems="center" mb={3}>
+                      <Avatar
+                        src={data.userId.profilePicture || defaultProfile}
+                        alt="profile"
+                        sx={{ width: 35, height: 35 }}
+                        onError={e => {
+                          e.target.src = defaultProfile;
+                        }}
+                      />
+                      <Typography variant="body1" ml={1}>
+                        {data.userId.name}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <PostCard data={data} cumBorder="none" cumBoxShadow="none" my={false} />
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={{ marginLeft: '10px' }}>
+                <Typography variant="h5" component="p" className="fw-bold mt-4">
+                  카테고리를 선택해 보세유!
+                </Typography>
+                <Divider />
+                <Box mt={2}>
+                  <Box display="flex" justifyContent="center" flexWrap="wrap">
+                    {areas.map(area => (
+                      <Options key={area} named={area} />
+                    ))}
+                  </Box>
+                  <Divider sx={{ marginY: '10px' }} />
+                  <Box display="flex" justifyContent="center" flexWrap="wrap">
+                    {tags.map(tag => (
+                      <Options key={tag} named={tag} />
+                    ))}
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       ) : (
-        <p>No data found</p> // 데이터가 없을 때 메시지 표시
+        <Typography variant="body1">No data found</Typography> // 데이터가 없을 때 메시지 표시
       )}
-    </div >
+    </Box>
   );
 };
 
 function Options({ named }) {
-  const [cl, setcl] = useState('transparent');
-  const [tx, settx] = useState('black');
+  const [cl, setCl] = useState('transparent');
+  const [tx, setTx] = useState('black');
 
-  function chagecl() {
+  function changeCl() {
     if (cl === 'transparent') {
-      setcl('#EA515B');
-      settx('white');
+      setCl('#EA515B');
+      setTx('white');
     } else {
-      setcl('transparent');
-      settx('black');
+      setCl('transparent');
+      setTx('black');
     }
   }
 
   return (
-    <button
-      className='m-2'
+    <Button
+      variant="contained"
       style={{
-        borderRadius: '10px',
         backgroundColor: cl,
-        border: 'none',
         color: tx,
+        borderRadius: '10px',
+        margin: '8px',
+        padding: '5px 10px',
       }}
-      onClick={chagecl}
+      onClick={changeCl}
     >
       #{named}
-    </button>
+    </Button>
   );
 }
-export default HomePage;
+
+export default Postlist;
