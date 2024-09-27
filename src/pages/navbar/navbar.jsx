@@ -25,18 +25,19 @@ const Navbar = () => {
         });
         const data = response.data;
         setUsername(data.username || '사용자');
-        setProfilePicture(data.profilePicture || defaultProfileImage);
+        setProfilePicture(data.profilePicture ? data.profilePicture : defaultProfileImage);
+        setIsLoggedIn(true); // 로그인 상태로 설정
       } catch (error) {
         console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+        setIsLoggedIn(false); // 오류 시 로그인 해제
       }
     } else {
-      setIsLoggedIn(false);
+      setIsLoggedIn(false); // 토큰이 없을 시 로그인 해제
     }
   };
 
   useEffect(() => {
     GetData();
-    setIsLoggedIn(true);
     setUser(name || '사용자');
   }, []);
 
@@ -76,36 +77,17 @@ const Navbar = () => {
           {!shouldHideButton && (
             <>
               <Button
-                className="fw-bold btn-lg m-4 btn-light rounded-pill"
+                className="fw-bold btn-xs m-4 btn-light rounded-pill"
                 style={{ border: '1px solid black', backgroundColor: '#F7527a', color: 'white' }}
                 onClick={goToRegion}
               >
                 AI 코스 추천
               </Button>
-              <div
-                style={{
-                  width: '3px',
-                  height: '40px',
-                  backgroundColor: '#908f91',
-                }}
-              />
             </>
           )}
 
           {isLoggedIn ? (
             <>
-              <img
-                src={profilePicture}
-                alt="Profile"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  marginLeft: '20px',
-                }}
-              />
-
               <Dropdown align="end" className="m-4">
                 <Dropdown.Toggle variant="light" id="dropdown-basic">
                   {username}
@@ -139,7 +121,7 @@ const Navbar = () => {
             <Button
               className="fw-bold btn-lg m-4 rounded-pill btn-light"
               style={{ border: '1px solid black' }}
-              href="/login"
+              onClick={() => navigate('/login')}
             >
               로그인 및 회원가입
             </Button>
