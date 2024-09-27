@@ -27,7 +27,7 @@ const decomposeHangul = (text) => {
 };
 
 const Region = () => {
-    const [selectedRegion, setSelectedRegion] = useState(null);
+    const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedNeighborhoods, setSelectedNeighborhoods] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [filteredNeighborhoods, setFilteredNeighborhoods] = useState([]);
@@ -38,7 +38,7 @@ const Region = () => {
     const regions = ['유성구', '대덕구', '동구', '서구', '중구'];
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/locations/city?city=대전광역시`)
+        axios.get(`api/springboot/locations/city?city=대전광역시`)
             .then(response => {
                 setTotalNeighborhoods(response.data);
             })
@@ -55,7 +55,7 @@ const Region = () => {
         setShowSuggestions(false);
 
         if (region) {
-            axios.get(`http://localhost:8080/locations/district?city=대전광역시&district=${region}`)
+            axios.get(`api/springboot/locations/district?city=대전광역시&district=${region}`)
                 .then(response => {
                     setNeighborhoods(response.data);
                     //예 :["전체","진잠동","학하동","원신흥동","상대동","온천1동","온천2동","노은1동","노은2동","노은3동","신성동","전민동","구즉동","관평동"]
@@ -132,11 +132,11 @@ const Region = () => {
     };
 
     return (
-        <div className="options">
-            <Container className="min-vh-100 d-flex flex-column justify-content-center">
+        <div className="options h-100 d-flex flex-column justify-content-start">
+            <Container>
                 <Row className="mb-5">
                     <Col md={5} className="d-flex flex-column justify-content-start mt-5">
-                        <h1 className="fw-bold" style={{ fontSize: '90px' }}>
+                        <h1 style={{ fontSize: '90px' }}>
                             어디가세유?
                         </h1>
                     </Col>
@@ -176,12 +176,13 @@ const Region = () => {
                                 )}
                             </InputGroup>
                             <Button
-                                className="ms-2 btn-lg btn-secondary"
+                                className="ms-2 btn-lg btn-secondary fw-bold"
                                 style={{
                                     border: '1px solid black',
                                     borderRadius: '8px',
                                     padding: '10px 20px',
-                                    minWidth: '220px'
+                                    minWidth: '220px',
+                                    backgroundColor: selectedRegion === null ? '#FF7828' : '#F7527a',
                                 }}
                                 onClick={() => handleRegionClick(null)}
                                 disabled={searchInput.trim() !== ''}
@@ -194,12 +195,14 @@ const Region = () => {
                                 <Button
                                     key={region}
                                     onClick={() => handleRegionClick(region)}
-                                    className={`m-2 btn-lg ${selectedRegion === region ? 'btn-warning' : 'btn-light'}`}
+                                    className={`m-2 btn-lg fw-bold`}
                                     style={{
                                         border: '1px solid black',
                                         borderRadius: '8px',
                                         padding: '10px 20px',
                                         minWidth: '125px',
+                                        backgroundColor: selectedRegion === region  ? '#FF7828' : '#FFCAB2',
+                                        color: selectedRegion === region  ? '#000' : '#fff',
                                     }}
                                     disabled={searchInput.trim() !== ''}
                                 >
@@ -214,12 +217,14 @@ const Region = () => {
                                     <Button
                                         key={neighborhood}
                                         onClick={() => handleNeighborhoodClick(neighborhood)}
-                                        className={`m-2 btn-lg ${selectedNeighborhoods.includes(neighborhood) ? 'btn-warning' : 'btn-light'}`}
+                                        className={`m-2 btn-lg fw-bold`}
                                         style={{
                                             border: '1px solid black',
                                             borderRadius: '8px',
                                             padding: '10px 20px',
                                             minWidth: '125px',
+                                            backgroundColor: selectedNeighborhoods.includes(neighborhood)  ? '#FF7828' : '#FFCAB2',
+                                            color: selectedNeighborhoods.includes(neighborhood)  ? '#000' : '#fff', 
                                         }}
                                     >
                                         {neighborhood}
@@ -229,25 +234,38 @@ const Region = () => {
                         )}
                     </Col>
                 </Row>
-                <Row className="m-auto">
-                    <Col className="text-end">
-                        <Button
-                            className="fw-bold btn-lg m-1"
-                            style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                            onClick={handleBeforeClick}
-                        >
-                            이전
-                        </Button>
-                        <Button
-                            className="fw-bold btn-lg"
-                            style={{ backgroundColor: '#FFA500', borderRadius: '30px', border: '1px solid black' }}
-                            onClick={handleNextClick}
-                            disabled={selectedNeighborhoods.length === 0}
-                        >
-                            다음
-                        </Button>
-                    </Col>
-                </Row>
+                <Button
+                className="fw-bold btn-lg m-5"
+                style={{
+                    position: 'fixed',
+                    left: '20px',
+                    bottom: '90px',
+                    backgroundColor: '#FF7828',
+                    borderRadius: '30px',
+                    border: '1px solid black',
+                    padding: '10px 40px',
+                }}
+                onClick={handleBeforeClick}
+                >
+                이전
+                </Button>
+
+                <Button
+                className="fw-bold btn-lg m-5"
+                style={{
+                    position: 'fixed',
+                    right: '20px',
+                    bottom: '90px',
+                    backgroundColor: '#FF7828',
+                    borderRadius: '30px',
+                    border: '1px solid black',
+                    padding: '10px 40px',
+                }}
+                disabled={selectedNeighborhoods.length === 0}
+                onClick={handleNextClick}
+                >
+                다음
+                </Button>
             </Container>
         </div>
     );

@@ -23,38 +23,46 @@ export default function MyPageNavBar(props) {
   };
 
   const myDrawer = (
-    <div>
-      <Box sx={{ overflow: 'auto' }}>
-        <List>
-          <ListItem disablePadding>
-            <h2 style={{ justifyContent: 'center' }}>내 활동</h2>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton
-              component={Link}
-              to="/myPage/myCourse"
-              selected={'/myPage/myCourse' === path || '/myPage' === path}
-            >
-              <ListItemText primary={'나의 코스'} />
-            </ListItemButton>
-          </ListItem>
+    <Box sx={{ overflow: 'auto', padding: 'none' }}>
+      <List>
+        <ListItem disablePadding>
+          <h2 style={{ justifyContent: 'center' }}>내 활동</h2>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/myCourse" selected={'/myCourse' === path}>
+            <ListItemText primary={'나의 코스'} />
+          </ListItemButton>
+        </ListItem>
 
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/" selected={'/' === path}>
-              <ListItemText primary={'저장한 코스'} />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
-    </div>
+        <ListItem disablePadding>
+          <ListItemButton
+            component={Link}
+            to="/saveCourse"
+            selected={'/saveCourse' === path}
+          >
+            <ListItemText primary={'저장한 코스'} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex', padding: { sm: '3em 20em 0 20em' } }}>
+    <Box
+      sx={{
+        padding: { sm: '1% 10% 0 10%' },
+        display: { xs: 'block', sm: 'flex' },
+      }}
+    >
       <IconButton
         color="inheret"
         onClick={changeOpenStatus}
-        sx={{ mr: 2, display: { sm: 'none' } }}
+        sx={{
+          mr: 2,
+          display: { sm: 'none' },
+          width: { xs: '100%' },
+          justifyContent: { xs: 'right' },
+        }}
       >
         <MenuIcon />
       </IconButton>
@@ -88,6 +96,7 @@ export default function MyPageNavBar(props) {
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
             boxSizing: 'border-box',
+            paddingLeft: '1em !important',
           },
           [`& .Mui-selected`]: {
             background: 'none',
@@ -98,7 +107,6 @@ export default function MyPageNavBar(props) {
         {myDrawer}
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
         {content}
       </Box>
     </Box>

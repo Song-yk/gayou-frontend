@@ -24,15 +24,20 @@ export default function MyCardControls(props) {
     showIcons,
   } = props;
   const [overviewSize, setOverviewSize] = useState(30);
+  const [isExpanded, setIsExpanded] = useState(false);
+
   useEffect(() => {
     if (showIcons) {
       setOverviewSize(20);
     }
-  }, []);
+  }, [showIcons]);
+
+  const toggleOverview = () => {
+    setIsExpanded(prev => !prev); // 클릭 시 상태 반전
+  };
+
   return (
-    <Card
-      sx={{ display: 'inline-flex', width: width || '100%', marginY: '5px' }}
-    >
+    <Card sx={{ display: 'inline-flex', width: width || '100%', marginY: '5px' }}>
       <CardMedia
         component="img"
         sx={{ width: '20%', borderRadius: '1.5em' }}
@@ -59,14 +64,11 @@ export default function MyCardControls(props) {
           <Typography component="div" variant="h6" sx={{ fontWeight: 'bold' }}>
             {title}
           </Typography>
-          <Typography
-            variant="subtitle2"
-            color="text.secondary"
-            component="div"
-          >
-            {overview.length > overviewSize
-              ? overview.slice(0, overviewSize) + '...'
-              : overview}
+          <Typography variant="subtitle2" color="text.secondary" component="div">
+            {isExpanded ? overview : overview.slice(0, overviewSize) + '... '}
+            <span onClick={toggleOverview} style={{ color: 'blue', cursor: 'pointer' }}>
+              {isExpanded ? '숨기기' : '더보기'}
+            </span>
           </Typography>
         </CardContent>
         {showIcons && (
@@ -85,16 +87,10 @@ export default function MyCardControls(props) {
               }}
             >
               {idx > 0 && (
-                <ArrowDropUpIcon
-                  onClick={moveCardUp}
-                  sx={{ cursor: 'pointer' }}
-                />
+                <ArrowDropUpIcon onClick={moveCardUp} sx={{ cursor: 'pointer' }} />
               )}
               {idx < totalItems - 1 && (
-                <ArrowDropDownIcon
-                  onClick={moveCardDown}
-                  sx={{ cursor: 'pointer' }}
-                />
+                <ArrowDropDownIcon onClick={moveCardDown} sx={{ cursor: 'pointer' }} />
               )}
             </Box>
             <Box sx={{ mr: 2 }}>
