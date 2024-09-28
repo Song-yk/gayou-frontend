@@ -38,6 +38,8 @@ The `VITE_KAKAO_API_KEY` is used within `.jsx` files, and it should be stored in
 ```makefile
 # .env
 VITE_KAKAO_API_KEY=your_kakao_api_key
+VITE_SPRINGBOOT_TARGET=your_springboot_target
+VITE_FLASK_TARGET=your_flask_target
 ```
 
 Ensure that you replace `your_kakao_api_key` with your actual Kakao API key.

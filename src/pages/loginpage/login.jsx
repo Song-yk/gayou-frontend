@@ -30,7 +30,7 @@ function Login() {
 
   const handleKakaoLogin = () => {
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:5173/auth/kakao/callback',
+      redirectUri: import.meta.env.VITE_TARGET + '/auth/kakao/callback',
       scope: 'account_email',
     });
   };
