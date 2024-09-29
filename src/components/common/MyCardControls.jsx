@@ -10,19 +10,17 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function MyCardControls(props) {
-  const {
-    width,
-    image,
-    image2,
-    title,
-    overview,
-    idx,
-    totalItems,
-    moveCardUp,
-    moveCardDown,
-    removeCard,
-    showIcons,
-  } = props;
+  const { width, image, image2, title, overview, idx, totalItems, moveCardUp, moveCardDown, removeCard, showIcons } =
+    props;
+
+  const removeHTMLTags = html => {
+    return html
+      .replace(/<\/?[^>]+(>|$)/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const cleanOverview = removeHTMLTags(overview);
   const [overviewSize, setOverviewSize] = useState(30);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -65,10 +63,16 @@ export default function MyCardControls(props) {
             {title}
           </Typography>
           <Typography variant="subtitle2" color="text.secondary" component="div">
-            {isExpanded ? overview : overview.slice(0, overviewSize) + '... '}
-            <span onClick={toggleOverview} style={{ color: 'blue', cursor: 'pointer' }}>
-              {isExpanded ? '숨기기' : '더보기'}
-            </span>
+            {cleanOverview.length > overviewSize ? (
+              <>
+                {isExpanded ? cleanOverview : cleanOverview.slice(0, overviewSize) + '... '}
+                <span onClick={toggleOverview} style={{ color: 'blue', cursor: 'pointer' }}>
+                  {isExpanded ? '숨기기' : '더보기'}
+                </span>
+              </>
+            ) : (
+              cleanOverview
+            )}
           </Typography>
         </CardContent>
         {showIcons && (
@@ -86,12 +90,8 @@ export default function MyCardControls(props) {
                 mr: 2,
               }}
             >
-              {idx > 0 && (
-                <ArrowDropUpIcon onClick={moveCardUp} sx={{ cursor: 'pointer' }} />
-              )}
-              {idx < totalItems - 1 && (
-                <ArrowDropDownIcon onClick={moveCardDown} sx={{ cursor: 'pointer' }} />
-              )}
+              {idx > 0 && <ArrowDropUpIcon onClick={moveCardUp} sx={{ cursor: 'pointer' }} />}
+              {idx < totalItems - 1 && <ArrowDropDownIcon onClick={moveCardDown} sx={{ cursor: 'pointer' }} />}
             </Box>
             <Box sx={{ mr: 2 }}>
               <CloseIcon onClick={removeCard} sx={{ cursor: 'pointer' }} />

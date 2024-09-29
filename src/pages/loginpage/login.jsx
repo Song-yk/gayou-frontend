@@ -12,16 +12,15 @@ function Login() {
   const [searchParams] = useSearchParams();
 
   const defaultValues = {
-    username: '',
+    email: '',
     password: '',
   };
 
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, setError } = useForm({
     defaultValues: defaultValues,
   });
 
   useEffect(() => {
-    // 카카오 API 초기화
     const kakaoApiKey = import.meta.env.VITE_KAKAO_API_KEY;
     if (kakaoApiKey && !window.Kakao.isInitialized()) {
       window.Kakao.init(kakaoApiKey);
@@ -39,7 +38,7 @@ function Login() {
     try {
       const hashedPassword = CryptoJS.SHA256(data.password).toString();
       const response = await axios.post('/api/springboot/auth/login', {
-        username: data.username,
+        email: data.email,
         password: hashedPassword,
       });
 
@@ -49,8 +48,22 @@ function Login() {
       const redirectPath = searchParams.get('redirect') || '/';
       navigate(redirectPath);
     } catch (error) {
-      console.error('로그인 실패:', error);
-      alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
+      if (error.response) {
+        const statusCode = error.response.status;
+        switch (statusCode) {
+          case 401:
+            setError('email', { type: 'manual', message: '이메일이 잘못되었습니다.' });
+            setError('password', { type: 'manual', message: '비밀번호가 잘못되었습니다.' });
+            break;
+          case 500:
+            alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+            break;
+          default:
+            alert('알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.');
+        }
+      } else {
+        alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.');
+      }
     }
   };
 
@@ -74,8 +87,25 @@ function Login() {
       </Typography>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ marginTop: '20px' }}>
-        <MyInput place="아이디 혹은 이메일" control={control} name="username" />
-        <MyInput place="비밀번호" type="password" name="password" control={control} />
+        <MyInput
+          place="이메일"
+          control={control}
+          name="email"
+          rules={{
+            required: '이메일을 입력하세요.',
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+              message: '유효한 이메일 주소를 입력해 주세요.',
+            },
+          }}
+        />
+        <MyInput
+          place="비밀번호"
+          type="password"
+          name="password"
+          control={control}
+          rules={{ required: '비밀번호를 입력하세요.' }}
+        />
         <MyButton
           type="submit"
           control={control}
@@ -88,8 +118,7 @@ function Login() {
         />
       </form>
 
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="body2">SNS 간편 로그인</Typography>
+      <Box sx={{ mt: 2 }}>
         <Grid container justifyContent="center" spacing={2} sx={{ mt: 2 }}>
           <Grid item>
             <img

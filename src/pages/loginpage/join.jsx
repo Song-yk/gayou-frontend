@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,10 +13,10 @@ function Join() {
   const [remainingTime, setRemainingTime] = useState(timer);
   const [sentAuthNumber, setSentAuthNumber] = useState('');
   const [isVerified, setIsVerified] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
 
   const defaultValues = {
-    username: '',
     name: '',
     password: '',
     email: '',
@@ -24,76 +24,95 @@ function Join() {
     birthday: '',
   };
 
-  const { handleSubmit, control, trigger, getValues } = useForm({
+  const { handleSubmit, control, trigger, getValues, setError, clearErrors } = useForm({
     defaultValues: defaultValues,
   });
 
-  const submission = data => {
+  const submission = async data => {
     if (!isVerified) {
-      setError('authenticationNumber', {
+      setError('email', {
         type: 'manual',
-        message: '이메일 인증이 완료되지 않았습니다.',
+        message: '이메일이 인증되지 않았습니다.',
       });
       return;
     }
+
     try {
       const birthday = data.birthday;
-      const year = birthday.substring(0, 2); // YY
-      const month = birthday.substring(2, 4); // MM
-      const day = birthday.substring(4, 6); // DD
+      const year = birthday.substring(0, 2);
+      const month = birthday.substring(2, 4);
+      const day = birthday.substring(4, 6);
 
-      // 현재 연도를 기준으로 YY를 YYYY로 변환
       const currentYear = new Date().getFullYear();
       const fullYear = year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
 
-      // 변환된 날짜를 YYYY-MM-DD 00:00:00.000000 형식으로 만들기
       const formattedBirthday = `${fullYear}-${month}-${day}`;
 
       const hashedPassword = CryptoJS.SHA256(data.password).toString();
-      // 변환된 birthday를 포함하여 데이터 전송
+
       const submissionData = {
         ...data,
         birthday: formattedBirthday,
         password: hashedPassword,
       };
-      axios
-        .post('/api/springboot/auth/register', submissionData)
-        .then(res => {
-          if (res.status === 200) {
-            navigate('/login');
-          }
-        })
-        .catch(error => {
-          alert('회원 가입에 실패 하셨습니다.');
-        });
+
+      const res = await axios.post('/api/springboot/auth/register', submissionData);
+      if (res.status === 200) {
+        navigate('/login');
+      }
     } catch (error) {
-      alert('회원 가입에 실패 하셨습니다.');
-    } finally {
-      console.log();
+      if (error.response) {
+        const statusCode = error.response.status;
+        switch (statusCode) {
+          case 409:
+            alert('이미 존재하는 사용자입니다. 다른 이메일을 사용하세요.');
+            break;
+          case 500:
+            alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            break;
+          default:
+            alert('알 수 없는 오류가 발생했습니다.');
+        }
+      } else {
+        alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+      }
     }
   };
 
   const sendVerificationEmail = async () => {
     const isEmailValid = await trigger('email');
     if (isEmailValid) {
-      setShowAuthNumberField(true);
-      setRemainingTime(300);
       try {
+        setShowAuthNumberField(true);
+        setRemainingTime(300);
         const response = await axios.post('/api/springboot/email/join', {
           email: getValues('email'),
         });
-        console.log(response.data);
         setSentAuthNumber(response.data);
+        setIsEmailSent(true);
+        clearErrors('email');
       } catch (error) {
-        console.log(error);
+        if (error.response) {
+          const statusCode = error.response.status;
+          switch (statusCode) {
+            case 429:
+              setError('email', { type: 'manual', message: '인증 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
+              break;
+            case 500:
+              setError('email', { type: 'manual', message: error.response.data });
+              break;
+            default:
+              setError('email', { type: 'manual', message: '이메일 전송 중 알 수 없는 오류가 발생했습니다.' });
+          }
+        } else {
+          setError('email', { type: 'manual', message: '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.' });
+        }
       }
     }
   };
 
   const verifyAuthNumber = () => {
     const userEnteredNumber = getValues('authenticationNumber');
-    console.log(userEnteredNumber);
-    console.log(sentAuthNumber);
     if (parseInt(userEnteredNumber) === parseInt(sentAuthNumber)) {
       setIsVerified(true);
       alert('인증번호가 성공적으로 확인되었습니다.');
@@ -104,20 +123,14 @@ function Join() {
   };
 
   useEffect(() => {
-    // useEffect를 사용하여 컴포넌트가 마운트될 때 타이머 시작.
-    const timer = setInterval(() => {
-      // 남은 시간이 0보다 크면 1초씩 감소시킴.
-      if (remainingTime > 0) {
+    if (remainingTime > 0 && isEmailSent) {
+      const timerId = setInterval(() => {
         setRemainingTime(prevTime => prevTime - 1);
-      } else {
-        // 남은 시간이 0이 되면 타이머 정지.
-        clearInterval(timer);
-      }
-    }, 1000);
+      }, 1000);
 
-    // 컴포넌트가 언마운트되면 타이머 정지
-    return () => clearInterval(timer);
-  }, [remainingTime]);
+      return () => clearInterval(timerId);
+    }
+  }, [remainingTime, isEmailSent]);
 
   const formatTime = timeInSeconds => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -125,50 +138,11 @@ function Join() {
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
-  const handleResendClick = () => {
-    setRemainingTime(timer);
-  };
-
   return (
     <Box>
       <h3>회원 가입</h3>
       <p>회원가입을 위한 정보를 입력해주세요.</p>
       <form onSubmit={handleSubmit(submission)}>
-        <Box>
-          <MyInput
-            type="text"
-            label="아이디"
-            name="username"
-            control={control}
-            rules={{
-              required: '아이디는 필수 항목입니다.',
-              minLength: {
-                value: 3,
-                message: '아이디는 최소 3자 이상이어야 합니다.',
-              },
-              pattern: {
-                value: /^[A-Za-z0-9]{3,15}$/,
-                message: '아이디는 3~15자리의 알파벳과 숫자만 허용됩니다.',
-              },
-            }}
-          />
-        </Box>
-        <Box>
-          <MyInput
-            type="text"
-            label="이름"
-            name="name"
-            control={control}
-            rules={{
-              required: '이름은 필수 항목입니다.',
-              minLength: {
-                value: 2,
-                message: '이름은 최소 2자 이상이어야 합니다.',
-              },
-            }}
-          />
-        </Box>
-
         <Box>
           <MyInput
             type="email"
@@ -230,6 +204,21 @@ function Join() {
             />
           </Box>
         )}
+        <Box>
+          <MyInput
+            type="text"
+            label="이름"
+            name="name"
+            control={control}
+            rules={{
+              required: '이름은 필수 항목입니다.',
+              minLength: {
+                value: 2,
+                message: '이름은 최소 2자 이상이어야 합니다.',
+              },
+            }}
+          />
+        </Box>
 
         <Box>
           <MyInput
