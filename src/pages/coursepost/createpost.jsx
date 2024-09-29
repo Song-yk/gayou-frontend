@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
@@ -13,6 +13,7 @@ const PostForm = () => {
   const [title, setTitle] = useState('');
   const [tag, setTag] = useState([]);
   const [content, setContent] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -28,7 +29,7 @@ const PostForm = () => {
         setMyData(response.data);
         setTitle(response.data.courseName);
       } catch (error) {
-        console.error('Error fetching data from the database:', error);
+        handleError(error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +38,37 @@ const PostForm = () => {
     fetchData();
   }, [searchParams]);
 
+  const handleError = error => {
+    if (error.response) {
+      if (error.response.status === 401) {
+        setError('로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
+        navigate('/login');
+      } else if (error.response.status === 404) {
+        setError('해당 데이터를 찾을 수 없습니다.');
+      } else if (error.response.status === 500) {
+        setError('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      } else {
+        setError(`오류 발생: ${error.response.statusText}`);
+      }
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답이 없는 경우
+      setError('서버와 연결할 수 없습니다. 네트워크를 확인해주세요.');
+    } else {
+      // 설정 중 오류가 발생한 경우
+      setError(`요청 설정 오류: ${error.message}`);
+    }
+  };
+
   const handleSubmit = async () => {
+    if ((title || '').trim() === '') {
+      setError('코스 이름은 필수 항목입니다.');
+      return;
+    }
+    if ((content || '').trim() === '') {
+      setError('소개 글은 필수 항목입니다.');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     const id = searchParams.get('id');
     const updatedData = {
@@ -51,11 +82,10 @@ const PostForm = () => {
       const response = await axios.put('/api/springboot/route/post', updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Post successful:', response.data);
 
       navigate('/postlist');
     } catch (error) {
-      console.error('There was an error creating the post!', error);
+      handleError(error); // 에러 처리 함수 호출
     }
   };
 
@@ -78,13 +108,13 @@ const PostForm = () => {
     <div className="home">
       {loading ? (
         <></>
-      ) : myData ? (
+      ) : myData.data ? (
         <Container className="align-items-center min-vh-100">
           <Row className="text-center create-text-center">
             <Col className="col-12 col-sm-12 col-md-12 col-lg-6">
               <input
                 className="title form-control form-control-lg"
-                value={title}
+                value={title || ''}
                 placeholder="코스 이름"
                 onChange={e => setTitle(e.target.value)}
               />
@@ -102,6 +132,7 @@ const PostForm = () => {
                   setContent(data);
                 }}
               />
+              {error && <Alert variant="danger">{error}</Alert>} {/* 에러 메시지 출력 */}
             </Col>
             <Col className="">{repeatRoutesSubTitle(myData.data)}</Col>
           </Row>
@@ -112,7 +143,7 @@ const PostForm = () => {
           </div>
         </Container>
       ) : (
-        <></>
+        <>{error && <Alert variant="danger">{error}</Alert>}</>
       )}
     </div>
   );

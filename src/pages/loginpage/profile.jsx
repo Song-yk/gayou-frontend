@@ -35,9 +35,7 @@ function Profile() {
         setIsLocal(data.isLocal);
         setProfilePicture(data.profilePicture || null);
       })
-      .catch(error => {
-        console.error('데이터를 불러오는 중 오류 발생:', error);
-      });
+      .catch(error => {});
   }, []);
 
   const handleImageUpload = e => {
@@ -69,11 +67,7 @@ function Profile() {
       .then(response => {
         alert('변경되었습니다.');
       })
-      .catch(error => {
-        console.error('업데이트 중 오류 발생:', error);
-
-        console.log(profilePicture);
-      });
+      .catch(error => {});
   };
   const goToChangePassword = () => {
     navigate('/passwordchange');

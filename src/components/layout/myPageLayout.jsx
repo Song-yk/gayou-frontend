@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import MyPageNavBar from '../../pages/navbar/myPageNavbar';
+import MyPageNavBar from '../../pages/navbar/myPageNavBar';
 
 function MyPageLayout() {
   return (

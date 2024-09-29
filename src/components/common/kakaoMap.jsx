@@ -15,7 +15,6 @@ function KakaoMap(props) {
       const container = mapRef.current;
 
       if (!container) {
-        console.error('Map container is not defined.');
         return;
       }
 
@@ -91,7 +90,6 @@ function KakaoMap(props) {
           const resData = await response.json();
 
           if (!resData.routes || resData.routes.length === 0) {
-            console.error('No routes found in response:', resData);
             return;
           }
 
@@ -104,8 +102,6 @@ function KakaoMap(props) {
                     linePath.push(new kakao.maps.LatLng(router.vertexes[i + 1], router.vertexes[i]));
                   }
                 }
-              } else {
-                console.error('Unexpected structure for vertexes:', router.vertexes);
               }
             });
           });
@@ -120,17 +116,11 @@ function KakaoMap(props) {
 
           try {
             polyline.setMap(map);
-          } catch (error) {
-            console.error('Error setting polyline on map:', error);
-          }
-        } catch (error) {
-          console.error('Error fetching route data:', error);
-        }
+          } catch (error) {}
+        } catch (error) {}
       };
 
       fetchData();
-    } else {
-      console.warn('Kakao or Kakao Maps is not loaded or center is not defined.');
     }
   }, [kakao, center]);
 

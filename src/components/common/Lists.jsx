@@ -36,11 +36,8 @@ export default function MyCardControls(props) {
       const response = await axios.put('/api/springboot/route/like', updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Post successful:', response.data);
       navigate('/postlist');
-    } catch (error) {
-      console.error('There was an error creating the post!', error);
-    }
+    } catch (error) {}
   };
 
   const share = 'https://github.com/user-attachments/assets/c2381a16-4bde-4b7a-81ae-c668330f88c8';

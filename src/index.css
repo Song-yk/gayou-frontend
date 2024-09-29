@@ -1,3 +1,14 @@
+@font-face {
+  font-family: 'SeoulHangang CM-BL';
+  src: url('./assets/fonts/SeoulHangang CM-BL.ttf') format('truetype');
+  font-weight: black;
+  font-style: normal;
+}
+
+* {
+  font-family: 'SeoulHangang CM-BL', sans-serif !important;
+}
+
 html {
   height: 100%;
 }
@@ -9,17 +20,6 @@ body {
 
 #root {
   height: 100%;
-}
-
-@font-face {
-  font-family: 'SeoulHangang CM-BL';
-  src: url('./assets/fonts/SeoulHangang CM-BL.ttf') format('truetype');
-  font-weight: black;
-  font-style: normal;
-}
-
-body {
-  font-family: 'SeoulHangang CM-BL', sans-serif;
 }
 
 html::-webkit-scrollbar {

@@ -13,9 +13,7 @@ const MyCourse = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMyData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
