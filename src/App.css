@@ -203,7 +203,7 @@ input::-webkit-inner-spin-button {
 
 .create-text-center > div.col {
   overflow-y: auto;
-  min-height: 47em;
+  height: 47em;
   padding: 1em;
   margin-bottom: 1em;
   border: #999 solid 1px;

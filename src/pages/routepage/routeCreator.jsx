@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -34,12 +34,19 @@ const RouteCreator = () => {
   const [editMode, setEditMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [places, setPlaces] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totItems, setTotItems] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const gridContainerRef = useRef(null);
 
   const { region, neighborhoods, travelDate, selectedConcepts } = location.state || {};
   const [params, setParams] = useState({
     region: region,
     neighborhoods: neighborhoods,
     selectedConcepts: selectedConcepts,
+    page: 1,
     rec: 1,
   });
 
@@ -59,15 +66,30 @@ const RouteCreator = () => {
     setLoading(false);
   };
 
-  const fetchPlaces = async () => {
-    const data = await fetchData('/api/flask/route/locations/sort/');
-    const storedData = sessionStorage.getItem('myData');
-    const filteredPlaces = data.filter(
-      place => !JSON.parse(storedData).data.some(item => item.contentid === place.contentid)
+  const fetchPlaces = async (page = 1) => {
+    setIsFetching(true);
+    const data = await fetchData('/api/flask/route/locations/sort/', {
+      params: {
+        ...params,
+        query: searchQuery,
+        page: page,
+      },
+    });
+    setTotItems(data.total_items);
+    setPlaces(prevPlaces => ({
+      query: searchQuery,
+      data: [...(prevPlaces?.data || []), ...data.data],
+    }));
+
+    sessionStorage.setItem(
+      'places',
+      JSON.stringify({
+        query: searchQuery,
+        data: [...(places?.data || []), ...data.data],
+      })
     );
 
-    setPlaces(filteredPlaces);
-    sessionStorage.setItem('places', JSON.stringify(filteredPlaces));
+    setIsFetching(false);
   };
 
   useEffect(() => {
@@ -83,20 +105,55 @@ const RouteCreator = () => {
       };
 
       const storedData = sessionStorage.getItem('myData');
-      const places = sessionStorage.getItem('places');
-      if (storedData && places && sessionStorage.getItem('optionData') === JSON.stringify(optionData)) {
+      const places = JSON.parse(sessionStorage.getItem('places'));
+      if (storedData && places.data && sessionStorage.getItem('optionData') === JSON.stringify(optionData)) {
         setMyData(JSON.parse(storedData));
-        setPlaces(JSON.parse(places));
+        setPlaces(places);
+        setSearchQuery(places.query);
         setLoading(false);
       } else {
         sessionStorage.setItem('optionData', JSON.stringify(optionData));
+        setLoading(true);
         await GetData();
-        await fetchPlaces();
+        await fetchPlaces(currentPage);
+        setLoading(false);
       }
     };
 
     loadData();
   }, [location.state]);
+
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      if (!gridContainerRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = gridContainerRef.current;
+      if (scrollHeight - scrollTop <= clientHeight + 50 && !isFetching) {
+        setIsFetching(true);
+        setCurrentPage(prevPage => prevPage + 1);
+      }
+    };
+
+    if (totItems <= (places?.data || []).length) return;
+
+    const gridContainer = gridContainerRef.current;
+
+    if (gridContainer) {
+      gridContainer.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (gridContainer) {
+        gridContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [editMode, gridContainerRef.current, isFetching, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      fetchPlaces(currentPage);
+    }
+  }, [currentPage]);
 
   const moveCard = useCallback(
     (idx, direction) => {
@@ -133,8 +190,6 @@ const RouteCreator = () => {
           sessionStorage.setItem('myData', JSON.stringify(updatedData));
           return updatedData;
         });
-
-        setPlaces(prevPlaces => prevPlaces.filter(p => p.contentid !== place.contentid));
       } else {
         alert('이미 추가된 장소입니다.');
       }
@@ -145,7 +200,7 @@ const RouteCreator = () => {
   const repeatRoutesSubTitle = data =>
     data.map((location, index) => (
       <MyCardControls
-        key={location.contentid}
+        key={`repeatRoutesSubTitle-${location.contentid}-${index}`}
         width="100%"
         image={location.firstimage}
         image2={location.firstimage2}
@@ -175,6 +230,8 @@ const RouteCreator = () => {
       if (response.status === 201) {
         navigate(`/Createpost?id=${response.data}`);
         sessionStorage.removeItem('myData');
+        sessionStorage.removeItem('optionData');
+        sessionStorage.removeItem('places');
       } else {
         alert('코스 저장에 실패했습니다.');
       }
@@ -197,73 +254,109 @@ const RouteCreator = () => {
     }
   };
 
-  const renderEditMode = () =>
-    editMode && (
-      <div className="custom_editcontrol radius_border">
-        <Box sx={{ p: 1 }}>
-          <Box sx={{ '& > :not(style)': { m: 1 } }}>
-            <FormControl sx={{ width: '95%' }}>
-              <Input
-                id="input-with-icon-adornment"
-                endAdornment={
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ cursor: 'pointer' }} />
-                  </InputAdornment>
-                }
-                sx={{
-                  background: '#eee',
-                  borderRadius: '5px',
-                  '&:before': { borderBottom: 'none !important' },
-                  '&:after': { borderBottom: 'none' },
-                }}
-              />
-            </FormControl>
-          </Box>
+  const renderEditMode = (page = 1) => {
+    const handleSearch = async () => {
+      setIsFetching(true);
+      const data = await fetchData('/api/flask/route/locations/sort/', {
+        params: {
+          ...params,
+          query: searchQuery,
+          page: page,
+        },
+      });
+      setTotItems(data.total_items);
+      setPlaces(prevPlaces => ({
+        query: searchQuery,
+        data: data.data,
+      }));
 
-          <Grid container style={{ maxHeight: '576px' }}>
-            {places.map(place => (
-              <Grid item xs={12} key={place.contentid}>
-                <Card
-                  variant=""
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    pl: 1,
-                    textAlign: 'left',
-                    borderBottom: 'inset 1px',
-                    pt: 1,
-                    pb: 0.5,
+      sessionStorage.setItem(
+        'places',
+        JSON.stringify({
+          query: searchQuery,
+          data: data.data,
+        })
+      );
+      setIsFetching(false);
+    };
+
+    return (
+      editMode && (
+        <div className="custom_editcontrol radius_border">
+          <Box sx={{ p: 1 }}>
+            <Box sx={{ '& > :not(style)': { m: 1 } }}>
+              <FormControl sx={{ width: '95%' }}>
+                <Input
+                  id="input-with-icon-adornment"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  onKeyPress={e => {
+                    if (e.key === 'Enter') handleSearch();
                   }}
-                >
-                  <Avatar variant="rounded" src={place.firstimage} alt="" sx={{ width: 60, height: 60, mr: 1 }} />
-                  <CardContent sx={{ flexGrow: 1, p: 0, mr: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                      {place.title}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {place.addr1}
-                    </Typography>
-                  </CardContent>
-                  <Button
-                    sx={{
-                      padding: '3px 0',
-                      minWidth: '50px',
-                      border: 'solid 1px',
-                      color: 'black',
-                      fontWeight: 500,
-                    }}
-                    onClick={() => addPlaceToRoute(place)}
-                  >
-                    추가
-                  </Button>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </div>
-    );
+                  endAdornment={
+                    <InputAdornment position="start">
+                      <SearchIcon
+                        sx={{ cursor: 'pointer' }}
+                        onClick={handleSearch} // 검색 버튼 클릭 시 검색 요청
+                      />
+                    </InputAdornment>
+                  }
+                  sx={{
+                    background: '#eee',
+                    borderRadius: '5px',
+                    '&:before': { borderBottom: 'none !important' },
+                    '&:after': { borderBottom: 'none' },
+                  }}
+                />
+              </FormControl>
+            </Box>
 
+            <Grid container ref={gridContainerRef} style={{ maxHeight: '560px' }}>
+              {places.data.map((place, index) => (
+                <Grid item xs={12} key={`container-${place.contentid}-${index}`}>
+                  <Card
+                    variant=""
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      pl: 1,
+                      textAlign: 'left',
+                      borderBottom: 'inset 1px',
+                      pt: 1,
+                      pb: 0.5,
+                    }}
+                  >
+                    <Avatar variant="rounded" src={place.firstimage} alt="" sx={{ width: 60, height: 60, mr: 1 }} />
+                    <CardContent sx={{ flexGrow: 1, p: 0, mr: 1 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                        {place.title}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {place.addr1}
+                      </Typography>
+                    </CardContent>
+                    <Button
+                      sx={{
+                        padding: '3px 0',
+                        minWidth: '50px',
+                        border: 'solid 1px',
+                        color: 'black',
+                        fontWeight: 500,
+                      }}
+                      onClick={() => addPlaceToRoute(place)}
+                    >
+                      추가
+                    </Button>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+            {isFetching && <div>로딩중...</div>}
+          </Box>
+        </div>
+      )
+    );
+  };
   return (
     <div style={{ textAlign: '-webkit-center', marginBottom: '2em' }}>
       {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
