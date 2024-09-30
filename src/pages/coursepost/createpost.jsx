@@ -134,7 +134,9 @@ const PostForm = () => {
               />
               {error && <Alert variant="danger">{error}</Alert>} {/* 에러 메시지 출력 */}
             </Col>
-            <Col className="">{repeatRoutesSubTitle(myData.data)}</Col>
+            <Col className="" style={{ overflow: 'auto' }}>
+              {repeatRoutesSubTitle(myData.data)}
+            </Col>
           </Row>
           <div className="col-12 d-flex justify-content-end">
             <Button className="fw-bold btn-lg rounded-pill btn-warning" onClick={handleSubmit}>
