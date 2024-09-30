@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './profile.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import defaultProfileImage from '../../assets/images/defaultProfile.png';
 
 function Profile() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -26,7 +24,7 @@ function Profile() {
       })
       .then(response => {
         const data = response.data;
-        setUsername(data.username || '');
+        setName(data.name || '');
         setDescription(data.description || '');
         setEmail(data.email || '');
         setPhoneNumber(data.phoneNumber || '');
@@ -53,7 +51,7 @@ function Profile() {
     e.preventDefault();
     const updatedData = {
       id,
-      username,
+      name,
       email,
       description,
       phoneNumber,
@@ -69,20 +67,9 @@ function Profile() {
       })
       .catch(error => {});
   };
-  const goToChangePassword = () => {
-    navigate('/passwordchange');
-  };
 
   return (
     <div className="account-settings-container">
-      <div className="sidebar">
-        <h2>계정 설정</h2>
-        <ul>
-          <li className="active">프로필 설정</li>
-          <li onClick={goToChangePassword}>비밀번호 변경</li>
-        </ul>
-      </div>
-
       <div className="profile-main-content">
         <div className="profile-picture-section">
           <div className="profile-picture">
@@ -107,14 +94,8 @@ function Profile() {
 
         <form className="profile-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">닉네임</label>
-            <input
-              type="text"
-              id="username"
-              maxLength="16"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
+            <label htmlFor="name">닉네임</label>
+            <input type="text" id="name" maxLength="16" value={name} onChange={e => setName(e.target.value)} />
             <small>한글 8자, 영문 및 숫자 16자까지 조합할 수 있어요.</small>
           </div>
 

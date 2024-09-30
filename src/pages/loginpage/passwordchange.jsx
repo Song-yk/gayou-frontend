@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './passwordchange.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 function PasswordChange() {
-  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  const goToChangeProfile = () => {
-    navigate('/profile');
-  };
 
   const handlePasswordChange = e => {
     e.preventDefault();
@@ -40,15 +34,7 @@ function PasswordChange() {
 
   return (
     <div className="password-change-container">
-      <div className="sidebar">
-        <h2>계정 설정</h2>
-        <ul>
-          <li onClick={goToChangeProfile}>프로필 설정</li>
-          <li className="active">비밀번호 변경</li>
-        </ul>
-      </div>
-
-      <div className="main-content">
+      <div className="pwchange-main-content">
         <form className="password-form" onSubmit={handlePasswordChange}>
           <div className="form-group">
             <input
