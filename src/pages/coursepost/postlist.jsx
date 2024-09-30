@@ -43,10 +43,8 @@ const Postlist = () => {
         const response = await axios.get('/api/springboot/route/datas', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response.data);
         setMyData(response.data);
       } catch (error) {
-        console.error('Error fetching data from the database:', error);
       } finally {
         setLoading(false);
       }

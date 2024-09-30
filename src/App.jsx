@@ -62,15 +62,39 @@ function App() {
             <Route path="routeCreator" element={<RouteCreate />} />
             {/* ProtectedLayout을 사용하여 보호된 페이지들을 보호 */}
             <Route element={<ProtectLayout />}>
-              <Route path="profile" element={<Profile />} />
-              <Route path="passwordchange" element={<Passwordchange />} />
               <Route path="createpost" element={<Createpost />} />
               <Route path="postlist" element={<Postlist />} />
               <Route path="updatepost" element={<Updatepost />} />
               <Route path="viewpost" element={<Viewpost />} />
-              <Route path="" element={<MyPageLayout />}>
+              <Route
+                path=""
+                element={
+                  <MyPageLayout
+                    title="내 활동"
+                    data={[
+                      { path: '/myCourse', name: '나의 코스' },
+                      { path: '/saveCourse', name: '저장한 코스' },
+                    ]}
+                  />
+                }
+              >
                 <Route path="myCourse" element={<MyCourse />} />
                 <Route path="saveCourse" element={<SaveCourse />} />
+              </Route>
+              <Route
+                path=""
+                element={
+                  <MyPageLayout
+                    title="계정 설정"
+                    data={[
+                      { path: '/profile', name: '프로필 설정' },
+                      { path: '/passwordchange', name: '비밀 번호 변경' },
+                    ]}
+                  />
+                }
+              >
+                <Route path="profile" element={<Profile />} />
+                <Route path="passwordchange" element={<Passwordchange />} />
               </Route>
             </Route>
           </Route>

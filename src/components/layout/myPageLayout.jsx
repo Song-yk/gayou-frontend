@@ -1,11 +1,11 @@
 import { Outlet } from 'react-router-dom';
-import MyPageNavBar from '../../pages/navbar/myPageNavbar';
+import MyPageNavBar from '../../pages/navbar/myPageNavBar';
 
-function MyPageLayout() {
+function MyPageLayout(props) {
   return (
     <div>
       <main>
-        <MyPageNavBar content={<Outlet />} />
+        <MyPageNavBar content={<Outlet />} data={props} />
       </main>
     </div>
   );
