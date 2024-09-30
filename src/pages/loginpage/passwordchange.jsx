@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './passwordchange.css';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 function PasswordChange() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -16,14 +17,19 @@ function PasswordChange() {
       return;
     }
 
+    const hashedPassword = CryptoJS.SHA256(newPassword).toString();
+
     const data = {
       id: userId,
       password: currentPassword,
-      newPassword: newPassword,
+      newPassword: hashedPassword,
     };
 
+    const token = localStorage.getItem('token');
     axios
-      .post('/api/springboot/auth/changePassword', data)
+      .post('/api/springboot/auth/changePassword', data, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(response => {
         alert('비밀번호가 변경되었습니다.');
       })

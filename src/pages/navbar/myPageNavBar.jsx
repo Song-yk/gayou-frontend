@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -9,7 +8,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
-import Toolbar from '@mui/material/Toolbar';
 
 function MyPageNavBar(props) {
   const { drawerWidth, content } = props;
@@ -42,62 +40,65 @@ function MyPageNavBar(props) {
   return (
     <Box
       sx={{
-        padding: { sm: '1% 10% 0 10%' },
-        display: { xs: 'block', sm: 'flex' },
+        padding: { md: '1% 10% 0 10%' },
+        display: { xs: 'block', md: 'flex' },
       }}
     >
-      <IconButton
-        color="inheret"
-        onClick={changeOpenStatus}
-        sx={{
-          mr: 2,
-          display: { sm: 'none' },
-          width: { xs: '100%' },
-          justifyContent: { xs: 'right' },
-        }}
-      >
-        <MenuIcon />
-      </IconButton>
-      <Drawer
-        variant="permanent"
-        sx={{
-          display: { xs: 'none', sm: 'block' },
-          width: drawerWidth,
-          [`& .MuiDrawer-paper`]: {
+      <Box sx={{ marginRight: { xs: '0', md: '1em' }, overflowX: 'hidden' }}>
+        <IconButton
+          color="inheret"
+          onClick={changeOpenStatus}
+          sx={{
+            mr: 2,
+            display: { md: 'none' },
+            width: { xs: '100%' },
+            justifyContent: { xs: 'right' },
+            borderRadius: 0,
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
             width: drawerWidth,
-            boxSizing: 'border-box',
-            position: 'relative',
-            borderRight: 'none',
-          },
-          [`& .Mui-selected`]: {
-            background: 'none',
-            color: '#f6854f',
-          },
-        }}
-      >
-        {myDrawer}
-      </Drawer>
-      <Drawer
-        anchor="top"
-        variant="temporary"
-        open={open}
-        onClose={changeOpenStatus}
-        sx={{
-          display: { xs: 'block', sm: 'none' },
-          width: drawerWidth,
-          [`& .MuiDrawer-paper`]: {
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              position: 'relative',
+              borderRight: 'none',
+            },
+            [`& .Mui-selected`]: {
+              background: 'none',
+              color: '#f6854f',
+            },
+          }}
+        >
+          {myDrawer}
+        </Drawer>
+        <Drawer
+          anchor="top"
+          variant="temporary"
+          open={open}
+          onClose={changeOpenStatus}
+          sx={{
+            display: { xs: 'block', md: 'none' },
             width: drawerWidth,
-            boxSizing: 'border-box',
-            paddingLeft: '1em !important',
-          },
-          [`& .Mui-selected`]: {
-            background: 'none',
-            color: '#f6854f',
-          },
-        }}
-      >
-        {myDrawer}
-      </Drawer>
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              paddingLeft: '1em !important',
+            },
+            [`& .Mui-selected`]: {
+              background: 'none',
+              color: '#f6854f',
+            },
+          }}
+        >
+          {myDrawer}
+        </Drawer>
+      </Box>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {content}
       </Box>
