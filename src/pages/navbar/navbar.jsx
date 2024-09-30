@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
-import { Button, Dropdown, Nav } from 'react-bootstrap';
+import { Button, Dropdown } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
-import axios from 'axios';
 import defaultProfileImage from '../../assets/images/defaultProfile.png';
 
 const Navbar = () => {
