@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import TagManager from '../../components/common/TagManager.jsx';
+import { padding } from '@mui/system';
 
 const PostForm = () => {
   const [myData, setMyData] = useState([]);
@@ -16,11 +17,18 @@ const PostForm = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const { id } = location.state || {};
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!id) {
+        alert('잘못된 접근입니다.');
+        navigate('/');
+        return;
+      }
+
       const token = localStorage.getItem('token');
-      const id = searchParams.get('id');
       try {
         const response = await axios.get('/api/springboot/route/data', {
           params: { id },
@@ -69,8 +77,9 @@ const PostForm = () => {
       return;
     }
 
+    if (!confirm('저장 하시겠습니까?')) return;
+
     const token = localStorage.getItem('token');
-    const id = searchParams.get('id');
     const updatedData = {
       id: id,
       courseName: title,
@@ -79,13 +88,13 @@ const PostForm = () => {
     };
 
     try {
-      const response = await axios.put('/api/springboot/route/post', updatedData, {
+      await axios.put('/api/springboot/route/post', updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       navigate('/postlist');
     } catch (error) {
-      handleError(error); // 에러 처리 함수 호출
+      handleError(error);
     }
   };
 
@@ -132,7 +141,11 @@ const PostForm = () => {
                   setContent(data);
                 }}
               />
-              {error && <Alert variant="danger">{error}</Alert>} {/* 에러 메시지 출력 */}
+              {error && (
+                <Alert variant="danger" className="create-error">
+                  {error}
+                </Alert>
+              )}
             </Col>
             <Col className="" style={{ overflow: 'auto' }}>
               {repeatRoutesSubTitle(myData.data)}

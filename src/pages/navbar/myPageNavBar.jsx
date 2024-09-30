@@ -11,10 +11,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 
-export default function MyPageNavBar(props) {
+function MyPageNavBar(props) {
   const { drawerWidth, content } = props;
   const location = useLocation();
-  const path = location.pathname;
+  const curPath = location.pathname;
 
   const [open, setOpen] = React.useState(false);
 
@@ -26,23 +26,15 @@ export default function MyPageNavBar(props) {
     <Box sx={{ overflow: 'auto', padding: 'none' }}>
       <List>
         <ListItem disablePadding>
-          <h2 style={{ justifyContent: 'center' }}>내 활동</h2>
+          <h2 style={{ justifyContent: 'center' }}>{props.data.title}</h2>
         </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/myCourse" selected={'/myCourse' === path}>
-            <ListItemText primary={'나의 코스'} />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton
-            component={Link}
-            to="/saveCourse"
-            selected={'/saveCourse' === path}
-          >
-            <ListItemText primary={'저장한 코스'} />
-          </ListItemButton>
-        </ListItem>
+        {props.data.data.map((data, index) => (
+          <ListItem disablePadding key={index}>
+            <ListItemButton component={Link} to={data.path} selected={data.path === curPath}>
+              <ListItemText primary={data.name} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
@@ -112,3 +104,5 @@ export default function MyPageNavBar(props) {
     </Box>
   );
 }
+
+export default MyPageNavBar;

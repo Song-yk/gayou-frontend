@@ -183,6 +183,14 @@ input::-webkit-inner-spin-button {
   height: 100%;
 }
 
+.ck-content {
+  height: 395px;
+}
+
+.ck-content > p {
+  margin: 0 !important;
+}
+
 .ck-content::-webkit-scrollbar {
   width: 10px;
 }
@@ -197,13 +205,18 @@ input::-webkit-inner-spin-button {
   box-shadow: inset 0px 0px 5px white;
 }
 
+.create-error {
+  padding: 5px !important;
+  margin-bottom: 0 !important;
+}
+
 .create-text-center {
   padding-top: 1em;
 }
 
 .create-text-center > div.col {
   overflow-y: auto;
-  height: 47em;
+  height: 44em;
   padding: 1em;
   margin-bottom: 1em;
   border: #999 solid 1px;
@@ -220,14 +233,6 @@ input::-webkit-inner-spin-button {
 }
 .create-text-center > div.col::-webkit-scrollbar-track {
   box-shadow: inset 0px 0px 5px white;
-}
-
-.ck-content {
-  height: 480px;
-}
-
-.ck-content > p {
-  margin: 0 !important;
 }
 
 .tags-list {

@@ -228,10 +228,10 @@ const RouteCreator = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 201) {
-        navigate(`/Createpost?id=${response.data}`);
         sessionStorage.removeItem('myData');
         sessionStorage.removeItem('optionData');
         sessionStorage.removeItem('places');
+        navigate(`/Createpost`, { state: { id: response.data } });
       } else {
         alert('코스 저장에 실패했습니다.');
       }
