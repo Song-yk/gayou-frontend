@@ -11,7 +11,7 @@ const MyCourse = () => {
       const token = localStorage.getItem('token');
       const response = await axios.get('/api/springboot/route/locations', {
         params: {
-          flag: true,
+          flag: false,
         },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -32,7 +32,7 @@ const MyCourse = () => {
       {myData && myData.length > 0 ? (
         <Box>
           {myData.map((data, index) => (
-            <PostCard key={index} data={data} onDelete={handleDeletePost} />
+            <PostCard key={index} data={data} onDelete={handleDeletePost} flag2={false} />
           ))}
         </Box>
       ) : (

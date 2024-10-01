@@ -1,44 +1,42 @@
-
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
+import SendIcon from '@mui/icons-material/Send';
+import { Box, IconButton, InputAdornment, TextareaAutosize, Typography } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Row } from 'react-bootstrap';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Alert, Col, Container, Row } from 'react-bootstrap';
+import { useLocation, useNavigate } from 'react-router-dom';
+import defaultProfileImage from '../../assets/images/defaultProfile.png';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
-import Typography from '@mui/material/Typography';
-import { Box, Chip } from '@mui/material';
+import '../../components/common/post.css';
+import ClearIcon from '@mui/icons-material/Clear';
 
-const PostForm = () => {
-
-  const [showFullContent, setShowFullContent] = useState(false);
-  const [myData, setMyData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState('');
-  const [tag, setTag] = useState([]);
-  const [content, setContent] = useState('');
-  const [error, setError] = useState('');
+const Viewpost = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const location = useLocation();
-  const { id } = location.state || {};
-  const isContentLong = myData.content && myData.content.length > 150;
+
+  const [loading, setLoading] = useState(true);
+  const [myData, setMyData] = useState([]);
+  const [error, setError] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [comment, setComment] = useState('');
+
+  const token = localStorage.getItem('token');
+  const { id, flag } = location.state || {};
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!id) {
-        alert('잘못된 접근입니다.');
-        navigate('/');
-        return;
-      }
-
-      const token = localStorage.getItem('token');
       try {
         const response = await axios.get('/api/springboot/route/data', {
           params: { id },
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log(response.data);
         setMyData(response.data);
-        setTitle(response.data.courseName);
-        setContent(response.data.content);
       } catch (error) {
         handleError(error);
       } finally {
@@ -47,7 +45,7 @@ const PostForm = () => {
     };
 
     fetchData();
-  }, [searchParams]);
+  }, [id, token]);
 
   const handleError = error => {
     if (error.response) {
@@ -83,6 +81,116 @@ const PostForm = () => {
     ));
   }
 
+  const toggleLike = async () => {
+    try {
+      const newIsLiked = !isLiked;
+
+      if (isLiked) {
+        await axios.delete('/api/springboot/route/like', {
+          params: {
+            id: myData.id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post(
+          '/api/springboot/route/like',
+          {},
+          {
+            params: {
+              id: myData.id,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+      setIsLiked(newIsLiked);
+    } catch (error) {
+      console.error('Error updating like:', error);
+    }
+  };
+  const toggleBookmark = async () => {
+    try {
+      const newIsBookmarked = !isBookmarked;
+
+      if (isBookmarked) {
+        await axios.delete('/api/springboot/route/bookmark', {
+          params: {
+            id: myData.id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post(
+          '/api/springboot/route/bookmark',
+          {},
+          {
+            params: {
+              id: myData.id,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+      setIsBookmarked(newIsBookmarked);
+    } catch (error) {
+      console.error('Error updating bookmark:', error);
+    }
+  };
+
+  const handleComment = async () => {
+    if (!comment.trim()) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        '/api/springboot/route/comment',
+        { comment },
+        {
+          params: {
+            id: id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setMyData(prevData => ({
+        ...prevData,
+        comments: [response.data, ...prevData.comments],
+      }));
+
+      setComment('');
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
+  };
+
+  const handleCommentDelete = async commentId => {
+    try {
+      await axios.delete('/api/springboot/route/comment', {
+        params: { id: commentId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMyData(prevData => ({
+        ...prevData,
+        comments: prevData.comments.filter(comment => comment.id !== commentId),
+      }));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <div className="home">
       {loading ? (
@@ -90,7 +198,7 @@ const PostForm = () => {
       ) : myData.data ? (
         <Container className="align-items-center min-vh-100">
           <Row className="text-center create-text-center">
-            <Col className="col-12 col-sm-12 col-md-12 col-lg-6">
+            <Col className="col-12 col-sm-12 col-md-12 col-lg-6" style={{ height: '35.5em' }}>
               <Typography
                 className="title form-control form-control-lg"
                 component="div"
@@ -99,29 +207,28 @@ const PostForm = () => {
                   fontWeight: 'bold',
                   whiteSpace: 'normal',
                   wordBreak: 'break-word',
+                  textAlign: 'left',
                 }}
               >
-                {title}
+                {myData.courseName}
               </Typography>
-              <Box sx={{ marginBottom: 2 }}>
-                {myData.tag.map((tag, index) => (
-                  <Chip key={index} label={'#' + tag} size="small" sx={{ marginRight: 1 }} />
-                ))}
+              <Box className="content" sx={{ marginBottom: 2 }}>
+                <ul className="tags-list">
+                  {myData.tag.map((tag, index) => (
+                    <li key={index} style={{ background: 'none', border: 'none', fontSize: '1.1em' }}>
+                      #{tag}
+                    </li>
+                  ))}
+                </ul>
               </Box>
               <Box>
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   component="p"
-                  sx={{ marginBottom: 1, whiteSpace: 'normal', wordBreak: 'break-word' }}
+                  sx={{ marginBottom: 1, textAlign: 'left' }}
                   dangerouslySetInnerHTML={{
-                    __html: myData.content
-                      ? showFullContent
-                        ? myData.content
-                        : isContentLong
-                          ? `${myData.content.slice(0, 150)}...`
-                          : myData.content.slice(0, 150)
-                      : '',
+                    __html: myData.content,
                   }}
                 />
               </Box>
@@ -132,11 +239,109 @@ const PostForm = () => {
                 </Alert>
               )}
             </Col>
-            <Col className="" style={{ overflow: 'auto' }}>
+            <Col className="" style={{ overflow: 'auto', height: '35.5em' }}>
               {repeatRoutesSubTitle(myData.data)}
             </Col>
           </Row>
-
+          <Row className="text-center create-text-center">
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Box>
+                  <ModeCommentOutlinedIcon /> 댓글 {myData.totComment}개
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <IconButton onClick={toggleLike}>
+                  {isLiked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                </IconButton>
+                {flag && (
+                  <IconButton onClick={toggleBookmark}>
+                    {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                  </IconButton>
+                )}
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 'auto', marginBottom: '1em' }}>
+              <img
+                src={myData.userId.profilePicture || defaultProfileImage}
+                alt="profile"
+                style={{ width: '50px', height: '50px', marginRight: '1em', borderRadius: '50px' }}
+              />
+              <TextareaAutosize
+                className="view-comment-textarea"
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                minRows={3}
+                style={{
+                  width: '100%',
+                  minHeight: '6em',
+                  maxHeight: '6em',
+                  border: 'solid 1px',
+                  borderRadius: '5px',
+                  resize: 'none',
+                  overflowY: 'auto',
+                  marginRight: '1em',
+                }}
+              />
+              <InputAdornment position="start">
+                <SendIcon sx={{ cursor: 'pointer' }} onClick={handleComment} />
+              </InputAdornment>
+            </Box>
+            <hr />
+            <Box sx={{ marginBottom: '2em' }}>
+              {myData.comments.map((data, index) => (
+                <Box key={index}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 'auto', marginBottom: '1em' }}>
+                    <img
+                      src={data.user.profilePicture || defaultProfileImage}
+                      alt="profile"
+                      style={{
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50px',
+                        marginRight: '1em',
+                        marginBottom: 'auto',
+                      }}
+                    />
+                    <Box sx={{ width: '100%' }}>
+                      <Box sx={{ display: 'flex' }}>
+                        <Box sx={{ textAlign: 'left', marginBottom: '0.5em' }}>{data.user.name}&nbsp;&nbsp;</Box>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          component="p"
+                          sx={{ marginBottom: 1, whiteSpace: 'normal', wordBreak: 'break-word' }}
+                        >
+                          {new Date(data.createDate).toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex' }}>
+                        <Typography
+                          className="title form-control form-control-lg"
+                          component="div"
+                          variant="body1"
+                          sx={{
+                            textAlign: 'left',
+                          }}
+                        >
+                          {data.comment}
+                        </Typography>
+                        {myData.userId.id === data.user.id && (
+                          <IconButton onClick={() => handleCommentDelete(data.id)}>
+                            <ClearIcon />
+                          </IconButton>
+                        )}
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Row>
         </Container>
       ) : (
         <>{error && <Alert variant="danger">{error}</Alert>}</>
@@ -145,4 +350,4 @@ const PostForm = () => {
   );
 };
 
-export default PostForm;
+export default Viewpost;

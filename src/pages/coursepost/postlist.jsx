@@ -62,7 +62,7 @@ const Postlist = () => {
         <Grid container justifyContent="center">
           <Grid item xs={12} md={8}>
             <Box mt={5} sx={{ display: 'grid', gridTemplateColumns: '1fr 275px', gap: '5px' }}>
-              <Box sx={{ border: 'solid 1px #aaa', borderRadius: '15px', padding: '1em' }}>
+              <Box sx={{ border: 'solid 1px #aaa', borderRadius: '15px', padding: '1em', height: 'fit-content' }}>
                 {myData.map((data, index) => (
                   <Box key={index} sx={{ borderBottom: 'solid 1px #ddd', marginBottom: '1em' }}>
                     <Box display="flex" alignItems="center" mb={3}>
