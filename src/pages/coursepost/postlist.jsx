@@ -44,6 +44,7 @@ const Postlist = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
+        console.log(response.data)
       } catch (error) {
       } finally {
         setLoading(false);
