@@ -1,10 +1,11 @@
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CircleIcon from '@mui/icons-material/Circle';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Card, CardContent, CardMedia, Chip, IconButton, Switch, Typography } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,16 +20,19 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
   const [isPublic, setIsPublic] = useState(data.public);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullContent, setShowFullContent] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const images = useMemo(() => data.data.map(item => item.contentid.firstimage), [data.data]);
   const isContentLong = data.content && data.content.length > 150;
   const token = localStorage.getItem('token');
+  const [isFavorit, setIsFavorit] = useState(false);
 
   useEffect(() => {
     if (!flag) {
       setIsBookmarked(data.bookmark?.id || false);
+      setIsLiked(data.like?.id || false)
     }
-  }, [flag, data.bookmark?.id]);
+  }, [flag, data.like?.id, data.bookmark?.id]);
 
   const handleLike = () => setLikes(likes + 1);
 
@@ -98,6 +102,42 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
       console.error('Error updating bookmark:', error);
     }
   };
+  const toggleLike = async () => {
+    try {
+      const newIsLiked = !isLiked;
+
+      if (isLiked) {
+        // 좋아요가 이미 눌러진 상태라면 좋아요 삭제 요청 (DELETE)
+        await axios.delete('/api/springboot/route/like', {
+          params: {
+            id: data.id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        // 좋아요가 안 눌러진 상태라면 좋아요 추가 요청 (POST)
+        await axios.post(
+          '/api/springboot/route/like',
+          {}, // 요청 본문이 필요 없으므로 빈 객체
+          {
+            params: {
+              id: data.id,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+      //상태 업데이트
+      setIsLiked(newIsLiked);
+    } catch (error) {
+      console.error('Error updating like:', error);
+    }
+  };
+
 
   const handleEditPost = async () => {
     if (!token) {
@@ -125,7 +165,7 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
         if (onDelete) {
           onDelete(data.id);
         }
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 
@@ -233,8 +273,8 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
                 ? showFullContent
                   ? data.content
                   : isContentLong
-                  ? `${data.content.slice(0, 150)}...`
-                  : data.content.slice(0, 150)
+                    ? `${data.content.slice(0, 150)}...`
+                    : data.content.slice(0, 150)
                 : '',
             }}
           />
@@ -253,8 +293,8 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {data.courseName && (
                 <>
-                  <IconButton onClick={handleLike}>
-                    <FavoriteIcon color="error" />
+                  <IconButton onClick={toggleLike}>
+                    {isLiked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
                   </IconButton>
                   <Typography>{likes}</Typography>
                   <IconButton>
