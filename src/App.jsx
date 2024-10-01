@@ -34,7 +34,7 @@ const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
 const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
-const SaveCourse = lazy(() => import('./pages/myPage/saveCourse'));
+const BookmarkCourse = lazy(() => import('./pages/myPage/bookmarkCourse'));
 
 const NotFound = lazy(() => import('./pages/errors/notFoundPage'));
 
@@ -73,13 +73,13 @@ function App() {
                     title="내 활동"
                     data={[
                       { path: '/myCourse', name: '나의 코스' },
-                      { path: '/saveCourse', name: '저장한 코스' },
+                      { path: '/bookmarkCourse', name: '저장한 코스' },
                     ]}
                   />
                 }
               >
                 <Route path="myCourse" element={<MyCourse />} />
-                <Route path="saveCourse" element={<SaveCourse />} />
+                <Route path="bookmarkCourse" element={<BookmarkCourse />} />
               </Route>
               <Route
                 path=""
