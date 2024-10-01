@@ -44,6 +44,10 @@ function Login() {
 
       const token = response.data.token;
       localStorage.setItem('token', token);
+      const name = response.data.name;
+      localStorage.setItem('name', name);
+      const profilePicture = response.data.profilePicture;
+      localStorage.setItem('profilePicture', profilePicture);
 
       const redirectPath = searchParams.get('redirect') || '/';
       navigate(redirectPath);

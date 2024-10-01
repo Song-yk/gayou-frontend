@@ -14,10 +14,9 @@ function Profile() {
   const [gender, setGender] = useState('male');
   const [isLocal, setIsLocal] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const id = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     axios
       .get(`api/springboot/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -50,7 +49,6 @@ function Profile() {
   const handleSubmit = e => {
     e.preventDefault();
     const updatedData = {
-      id,
       name,
       email,
       description,
@@ -61,7 +59,7 @@ function Profile() {
       profilePicture,
     };
     axios
-      .post('/api/springboot/auth/profile/update', updatedData)
+      .post('/api/springboot/auth/profile/update', updatedData, { headers: { Authorization: `Bearer ${token}` } })
       .then(response => {
         alert('변경되었습니다.');
       })
