@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Container, Row, Col, FormControl, InputGroup, ListGroup } from 'react-bootstrap';
-//import { BsSearch } from 'react-icons/bs';
+import { useEffect, useState } from 'react';
+import { Button, Col, Container, FormControl, InputGroup, ListGroup, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 // 초성, 중성, 종성 분리 함수
 const decomposeHangul = text => {
@@ -131,7 +130,6 @@ const Region = () => {
         .get(`api/springboot/locations/district?city=대전광역시&district=${region}`)
         .then(response => {
           setNeighborhoods(response.data);
-          //예 :["전체","진잠동","학하동","원신흥동","상대동","온천1동","온천2동","노은1동","노은2동","노은3동","신성동","전민동","구즉동","관평동"]
         })
         .catch(error => {
           setNeighborhoods([]);
@@ -160,7 +158,6 @@ const Region = () => {
     const decomposedInput = decomposeHangul(input);
     const decomposedText = decomposeHangul(text);
 
-    // 각 음절의 초성, 중성, 종성을 모두 비교
     return decomposedInput.split('').every((char, index) => {
       return decomposedText[index] && decomposedText[index] === char;
     });
@@ -227,9 +224,6 @@ const Region = () => {
                     padding: '10px',
                   }}
                 />
-                {/* <Button variant="outline-secondary">
-                                    <BsSearch className='m-1'/>
-                                </Button> */}
                 {showSuggestions && filteredNeighborhoods.length > 0 && (
                   <ListGroup
                     className="position-absolute start-0 w-100"

@@ -78,7 +78,7 @@ const Postlist = () => {
                       </Typography>
                     </Box>
                     <Box>
-                      <PostCard data={data} cumBorder="none" cumBoxShadow="none" my={false} />
+                      <PostCard data={data} cumBorder="none" cumBoxShadow="none" flag={false} />
                     </Box>
                   </Box>
                 ))}

@@ -3,13 +3,13 @@ import axios from 'axios';
 import Box from '@mui/material/Box';
 import PostCard from '../../components/common/PostCard';
 
-const MyCourse = () => {
+const BookmarkCourse = () => {
   const [myData, setMyData] = useState(null);
 
   const GetData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/springboot/route/locations', {
+      const response = await axios.get('/api/springboot/route/bookmark', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMyData(response.data);
@@ -20,16 +20,12 @@ const MyCourse = () => {
     GetData();
   }, []);
 
-  const handleDeletePost = id => {
-    setMyData(prevData => prevData.filter(post => post.id !== id));
-  };
-
   return (
     <Box>
       {myData && myData.length > 0 ? (
         <Box>
           {myData.map((data, index) => (
-            <PostCard key={index} data={data} onDelete={handleDeletePost} />
+            <PostCard key={index} data={data} flag={false} />
           ))}
         </Box>
       ) : (
@@ -39,4 +35,4 @@ const MyCourse = () => {
   );
 };
 
-export default MyCourse;
+export default BookmarkCourse;

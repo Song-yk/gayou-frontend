@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import CloseIcon from '@mui/icons-material/Close';
+import { useEffect, useState } from 'react';
 
 export default function MyCardControls(props) {
   const { width, image, image2, title, overview, idx, totalItems, moveCardUp, moveCardDown, removeCard, showIcons } =

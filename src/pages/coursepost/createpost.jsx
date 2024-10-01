@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Alert, Button, Col, Container, Row } from 'react-bootstrap';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 import TagManager from '../../components/common/TagManager.jsx';
-import { padding } from '@mui/system';
 
 const PostForm = () => {
   const [myData, setMyData] = useState([]);
@@ -36,6 +35,7 @@ const PostForm = () => {
         });
         setMyData(response.data);
         setTitle(response.data.courseName);
+        setContent(response.data.content);
       } catch (error) {
         handleError(error);
       } finally {
@@ -59,10 +59,8 @@ const PostForm = () => {
         setError(`오류 발생: ${error.response.statusText}`);
       }
     } else if (error.request) {
-      // 요청이 전송되었으나 응답이 없는 경우
       setError('서버와 연결할 수 없습니다. 네트워크를 확인해주세요.');
     } else {
-      // 설정 중 오류가 발생한 경우
       setError(`요청 설정 오류: ${error.message}`);
     }
   };
@@ -92,7 +90,7 @@ const PostForm = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      navigate('/postlist');
+      navigate('/myCourse');
     } catch (error) {
       handleError(error);
     }
@@ -128,11 +126,11 @@ const PostForm = () => {
                 onChange={e => setTitle(e.target.value)}
               />
               <div>
-                <TagManager tags={tag} setTags={setTag} />
+                <TagManager tags={tag} setTags={setTag} data={myData.tag} />
               </div>
               <CKEditor
                 editor={ClassicEditor}
-                data=""
+                data={myData.content}
                 config={{
                   placeholder: '소개글을 써줘유',
                 }}
