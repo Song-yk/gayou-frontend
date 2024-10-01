@@ -32,7 +32,7 @@ const MyCourse = () => {
       {myData && myData.length > 0 ? (
         <Box>
           {myData.map((data, index) => (
-            <PostCard key={index} data={data} onDelete={handleDeletePost} />
+            <PostCard key={index} data={data} onDelete={handleDeletePost} flag2={false} />
           ))}
         </Box>
       ) : (
