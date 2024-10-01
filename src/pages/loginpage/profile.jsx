@@ -33,7 +33,7 @@ function Profile() {
         setIsLocal(data.isLocal);
         setProfilePicture(data.profilePicture || null);
       })
-      .catch(error => {});
+      .catch(error => { });
   }, []);
 
   const handleImageUpload = e => {
@@ -65,7 +65,7 @@ function Profile() {
       .then(response => {
         alert('변경되었습니다.');
       })
-      .catch(error => {});
+      .catch(error => { });
   };
 
   return (
@@ -155,9 +155,8 @@ function Profile() {
           </div>
 
           <div className="location w-50">
-            <label>지역</label>
             <div className="location-options">
-              <label>대전이신가요?</label>
+              <label>대전거주하세요?</label>
               <label className="switch">
                 <input type="checkbox" checked={isLocal} onChange={() => setIsLocal(!isLocal)} />
                 <span className="slider"></span>

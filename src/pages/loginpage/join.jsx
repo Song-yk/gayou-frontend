@@ -3,10 +3,14 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import Switch from '@mui/material/Switch';
+
+import './profile.css';
 import { Box } from '@mui/material';
+import 'react-datepicker/dist/react-datepicker.css';
 import MyInput from '../../components/common/MyInput';
 import MyButton from '../../components/common/MyButton';
-
+import defaultProfileImage from '../../assets/images/defaultProfile.png';
 function Join() {
   const [showAuthNumberField, setShowAuthNumberField] = useState(false);
   const [timer, setTimer] = useState(300);
@@ -15,7 +19,9 @@ function Join() {
   const [isVerified, setIsVerified] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
-
+  const [gender, setGender] = useState('male');
+  const [isLocal, setIsLocal] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
   const defaultValues = {
     name: '',
     password: '',
@@ -23,6 +29,7 @@ function Join() {
     phoneNumber: '',
     birthday: '',
   };
+  const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
   const { handleSubmit, control, trigger, getValues, setError, clearErrors } = useForm({
     defaultValues: defaultValues,
@@ -110,7 +117,16 @@ function Join() {
       }
     }
   };
-
+  const handleImageUpload = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicture(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const verifyAuthNumber = () => {
     const userEnteredNumber = getValues('authenticationNumber');
     if (parseInt(userEnteredNumber) === parseInt(sentAuthNumber)) {
@@ -142,8 +158,43 @@ function Join() {
     <Box>
       <h3>회원 가입</h3>
       <p>회원가입을 위한 정보를 입력해주세요.</p>
+      <div className="profile-picture-section">
+        <div className="profile-picture">
+          <img src={profilePicture || defaultProfileImage} alt="Profile" className="profile-image" />
+        </div>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="upload-button"
+          style={{ display: 'none' }}
+        />
+        <label
+          htmlFor="fileInput"
+          className="btn btn-lg btn-light"
+          style={{ border: '1px solid black', marginLeft: '20px' }}
+        >
+          사진 업로드
+        </label>
+      </div>
       <form onSubmit={handleSubmit(submission)}>
         <Box>
+          <Box>
+            <MyInput
+              type="text"
+              label="이름"
+              name="name"
+              control={control}
+              rules={{
+                required: '이름은 필수 항목입니다.',
+                minLength: {
+                  value: 2,
+                  message: '이름은 최소 2자 이상이어야 합니다.',
+                },
+              }}
+            />
+          </Box>
           <MyInput
             type="email"
             label="이메일"
@@ -204,22 +255,6 @@ function Join() {
             />
           </Box>
         )}
-        <Box>
-          <MyInput
-            type="text"
-            label="이름"
-            name="name"
-            control={control}
-            rules={{
-              required: '이름은 필수 항목입니다.',
-              minLength: {
-                value: 2,
-                message: '이름은 최소 2자 이상이어야 합니다.',
-              },
-            }}
-          />
-        </Box>
-
         <Box>
           <MyInput
             type="password"
@@ -284,16 +319,59 @@ function Join() {
           />
         </Box>
 
-        <MyButton
-          name=""
-          color="sunsetOrange"
-          control={control}
-          value="가입하기"
-          borderRadius="5px"
-          margin="0px"
-          width="100%"
-          onClick={handleSubmit(submission)}
-        />
+
+        <div className="form-group gender-location" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="gender w-50">
+            <label style={{ display: 'block', textAlign: 'left' }}>성별</label>
+            <div className="gender-options" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label htmlFor="male" style={{ width: '40px' }}>
+                남성
+              </label>
+              <input
+                type="radio"
+                id="male"
+                name="gender"
+                value="male"
+                checked={gender === 'male'}
+                style={{ width: '10px' }}
+                onChange={e => setGender(e.target.value)}
+              />
+              <label htmlFor="female" style={{ width: '40px', marginLeft: '0' }}>
+                여성
+              </label>
+              <input
+                type="radio"
+                id="female"
+                name="gender"
+                value="female"
+                checked={gender === 'female'}
+                style={{ width: '10px' }}
+                onChange={e => setGender(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="location w-50">
+            <div>
+              <label>대전거주하세요?</label>
+              <label className="switch">
+
+                <Switch {...label} checked={isLocal} onChange={() => setIsLocal(!isLocal)} />
+              </label>
+              <span>{isLocal ? '예' : '아니요'}</span>
+            </div>
+          </div>
+          <MyButton
+            name=""
+            color="sunsetOrange"
+            control={control}
+            value="가입하기"
+            borderRadius="5px"
+            margin="0px"
+            width="50%"
+            onClick={handleSubmit(submission)}
+          />
+        </div>
       </form>
     </Box>
   );
