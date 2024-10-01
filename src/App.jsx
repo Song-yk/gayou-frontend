@@ -1,14 +1,13 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { lazy, Suspense } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import './App.css';
 
 const MainLayout = lazy(() => import('./components/layout/mainLayout'));
 const MyPageLayout = lazy(() => import('./components/layout/myPageLayout'));
 const ProtectLayout = lazy(() => import('./components/layout/ProtectLayout'));
 const AuthLayout = lazy(() => import('./components/layout/AuthLayout'));
 
-// 페이지 컴포넌트들
 const Home = lazy(() => import('./pages/homepage/home'));
 const Region = lazy(() => import('./pages/optionspage/region'));
 const Extra = lazy(() => import('./pages/optionspage/extra'));
@@ -34,6 +33,7 @@ const Updatepost = lazy(() => import('./pages/coursepost/updatepost'));
 const Viewpost = lazy(() => import('./pages/coursepost/viewpost'));
 
 const MyCourse = lazy(() => import('./pages/myPage/myCourse'));
+const TempCourse = lazy(() => import('./pages/myPage/tempCourse'));
 const BookmarkCourse = lazy(() => import('./pages/myPage/bookmarkCourse'));
 
 const NotFound = lazy(() => import('./pages/errors/notFoundPage'));
@@ -73,12 +73,14 @@ function App() {
                     title="내 활동"
                     data={[
                       { path: '/myCourse', name: '나의 코스' },
+                      { path: '/tempCourse', name: '임시 코스' },
                       { path: '/bookmarkCourse', name: '저장한 코스' },
                     ]}
                   />
                 }
               >
                 <Route path="myCourse" element={<MyCourse />} />
+                <Route path="tempCourse" element={<TempCourse />} />
                 <Route path="bookmarkCourse" element={<BookmarkCourse />} />
               </Route>
               <Route

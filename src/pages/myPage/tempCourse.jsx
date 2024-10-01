@@ -11,7 +11,7 @@ const MyCourse = () => {
       const token = localStorage.getItem('token');
       const response = await axios.get('/api/springboot/route/locations', {
         params: {
-          flag: true,
+          flag: false,
         },
         headers: { Authorization: `Bearer ${token}` },
       });
