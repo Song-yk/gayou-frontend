@@ -70,6 +70,8 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
     setShowFullContent(!showFullContent);
   };
 
+
+
   const toggleBookmark = async () => {
     try {
       const newIsBookmarked = !isBookmarked;
@@ -168,6 +170,9 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
       } catch (error) { }
     }
   };
+  const handledetail = () => {
+    navigate('/viewpost', { state: { id: data.id } });
+  }
 
   return (
     <Card
@@ -374,6 +379,9 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
                 />
               </Box>
             )}
+          </Box>
+          <Box>
+            <button onClick={handledetail}>자세히</button>
           </Box>
         </CardContent>
       </Box>
