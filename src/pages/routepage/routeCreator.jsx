@@ -1,24 +1,24 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
 import {
+  Avatar,
   Box,
-  Typography,
+  Button,
   Card,
   CardContent,
-  Avatar,
-  Button,
+  FormControl,
   Grid,
-  styled,
   Input,
   InputAdornment,
-  FormControl,
+  styled,
+  Typography,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router-dom';
 import KakaoMap from '../../components/common/kakaoMap.jsx';
-import MyCardControls from '../../components/common/MyCardControls.jsx';
 import MyButton from '../../components/common/MyButton.jsx';
+import MyCardControls from '../../components/common/MyCardControls.jsx';
 
 const AnimatedGridItem = styled(Grid)(({ theme }) => ({
   transition: 'all 0.2s ease',
@@ -41,7 +41,7 @@ const RouteCreator = () => {
 
   const gridContainerRef = useRef(null);
 
-  const { region, neighborhoods, travelDate, selectedConcepts } = location.state || {};
+  const { region = '', neighborhoods, travelDate, selectedConcepts } = location.state || {};
   const [params, setParams] = useState({
     region: region,
     neighborhoods: neighborhoods,
@@ -55,6 +55,7 @@ const RouteCreator = () => {
       const response = await axios.get(url, { params, ...options });
       return response.data;
     } catch (error) {
+      console.error(error);
       throw new Error('데이터를 불러오는 중 오류가 발생했습니다.');
     }
   };
@@ -93,7 +94,7 @@ const RouteCreator = () => {
   };
 
   useEffect(() => {
-    if (!region) return navigate('/region');
+    if (!neighborhoods.length) return navigate('/region');
     if (!travelDate) return navigate('/extra');
     if (!selectedConcepts) return navigate('/concept');
 

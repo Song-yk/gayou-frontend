@@ -1,9 +1,20 @@
-import { useState } from 'react';
-import './post.css'; // Assuming your CSS is in style.css
+import { useEffect, useState } from 'react';
+import './post.css';
 
-const TagManager = ({ tags, setTags }) => {
+const TagManager = ({ tags, setTags, data }) => {
   const maxTags = 999;
   const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      for (let i = 0; i < data.length; i++) {
+        if (!tags.includes(data[i])) {
+          setTags(prevTags => [...prevTags, data[i]]);
+        }
+      }
+      console.log('Added tags from data:', data);
+    }
+  }, [data, tags, setTags]);
 
   const createTagElements = () => {
     return tags.map(tag => (
