@@ -97,7 +97,7 @@ const Navbar = () => {
                   </div>
                 </Dropdown.ItemText>
                 <Dropdown.Divider />
-                <Dropdown.Item onClick={() => navigate('/myCourse')}>나의 코스</Dropdown.Item>
+                <Dropdown.Item onClick={() => navigate('/myCourse')}>내 활동</Dropdown.Item>
                 <Dropdown.Item onClick={() => navigate('/profile')}>계정 설정</Dropdown.Item>
                 <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
               </Dropdown.Menu>

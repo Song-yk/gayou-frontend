@@ -232,11 +232,12 @@ const RouteCreator = () => {
         sessionStorage.removeItem('myData');
         sessionStorage.removeItem('optionData');
         sessionStorage.removeItem('places');
-        navigate(`/Createpost`, { state: { id: response.data } });
+        navigate(`/createpost`, { state: { id: response.data } });
       } else {
         alert('코스 저장에 실패했습니다.');
       }
     } catch (error) {
+      console.error(error);
       alert('코스를 저장하는 중 오류가 발생했습니다.');
     }
   };

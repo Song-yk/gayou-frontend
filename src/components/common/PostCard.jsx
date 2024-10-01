@@ -1,11 +1,10 @@
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CircleIcon from '@mui/icons-material/Circle';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Box, Card, CardContent, CardMedia, Chip, IconButton, Switch, Typography } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,7 +12,14 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import MyButton from '../../components/common/MyButton.jsx';
 
-export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, flag = true, onDelete = null }) {
+export default function PostCard({
+  data,
+  cumBorder = null,
+  cumBoxShadow = null,
+  flag = true,
+  onDelete = null,
+  flag2 = true,
+}) {
   const navigate = useNavigate();
   const { control } = useForm();
   const [likes, setLikes] = useState(data.totlike || 0);
@@ -25,16 +31,13 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
   const images = useMemo(() => data.data.map(item => item.contentid.firstimage), [data.data]);
   const isContentLong = data.content && data.content.length > 150;
   const token = localStorage.getItem('token');
-  const [isFavorit, setIsFavorit] = useState(false);
 
   useEffect(() => {
     if (!flag) {
       setIsBookmarked(data.bookmark?.id || false);
-      setIsLiked(data.like?.id || false)
+      setIsLiked(data.like?.id || false);
     }
   }, [flag, data.like?.id, data.bookmark?.id]);
-
-  const handleLike = () => setLikes(likes + 1);
 
   const togglePrivacy = async () => {
     try {
@@ -69,8 +72,6 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
   };
-
-
 
   const toggleBookmark = async () => {
     try {
@@ -109,7 +110,6 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
       const newIsLiked = !isLiked;
 
       if (isLiked) {
-        // 좋아요가 이미 눌러진 상태라면 좋아요 삭제 요청 (DELETE)
         await axios.delete('/api/springboot/route/like', {
           params: {
             id: data.id,
@@ -119,10 +119,9 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
           },
         });
       } else {
-        // 좋아요가 안 눌러진 상태라면 좋아요 추가 요청 (POST)
         await axios.post(
           '/api/springboot/route/like',
-          {}, // 요청 본문이 필요 없으므로 빈 객체
+          {},
           {
             params: {
               id: data.id,
@@ -133,13 +132,11 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
           }
         );
       }
-      //상태 업데이트
       setIsLiked(newIsLiked);
     } catch (error) {
       console.error('Error updating like:', error);
     }
   };
-
 
   const handleEditPost = async () => {
     if (!token) {
@@ -167,12 +164,12 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
         if (onDelete) {
           onDelete(data.id);
         }
-      } catch (error) { }
+      } catch (error) {}
     }
   };
   const handledetail = () => {
-    navigate('/viewpost', { state: { id: data.id } });
-  }
+    navigate('/viewpost', { state: { id: data.id, flag: flag } });
+  };
 
   return (
     <Card
@@ -278,8 +275,8 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
                 ? showFullContent
                   ? data.content
                   : isContentLong
-                    ? `${data.content.slice(0, 150)}...`
-                    : data.content.slice(0, 150)
+                  ? `${data.content.slice(0, 150)}...`
+                  : data.content.slice(0, 150)
                 : '',
             }}
           />
@@ -302,9 +299,6 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
                     {isLiked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
                   </IconButton>
                   <Typography>{likes}</Typography>
-                  <IconButton>
-                    <ChatBubbleIcon />
-                  </IconButton>
                   {!flag && (
                     <IconButton onClick={toggleBookmark}>
                       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
@@ -380,9 +374,20 @@ export default function PostCard({ data, cumBorder = null, cumBoxShadow = null, 
               </Box>
             )}
           </Box>
-          <Box>
-            <button onClick={handledetail}>자세히</button>
-          </Box>
+          {flag2 && (
+            <Box sx={{ textAlign: 'center' }}>
+              <MyButton
+                control={control}
+                name="detail"
+                value="모두 보기"
+                color="roseBlush"
+                border="none"
+                margin="1em 0 0 0"
+                width="100%"
+                onClick={handledetail}
+              />
+            </Box>
+          )}
         </CardContent>
       </Box>
     </Card>
