@@ -298,7 +298,7 @@ export default function PostCard({
                   <IconButton onClick={toggleLike}>
                     {isLiked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
                   </IconButton>
-                  <Typography>{likes}</Typography>
+                  {/* <Typography>{likes}</Typography> */}
                   {!flag && (
                     <IconButton onClick={toggleBookmark}>
                       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
