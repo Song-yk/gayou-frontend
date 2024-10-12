@@ -85,7 +85,6 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
-
       } else {
         await axios.post(
           '/api/springboot/route/bookmark',
@@ -118,15 +117,19 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
-        await axios.put('/api/springboot/route/like', {}, {
-          params: {
-            id: data.id,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLikes(likes - 1)
+        await axios.put(
+          '/api/springboot/route/like',
+          {},
+          {
+            params: {
+              id: data.id,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLikes(likes - 1);
       } else {
         await axios.post(
           '/api/springboot/route/like',
@@ -140,15 +143,19 @@ export default function PostCard({
             },
           }
         );
-        await axios.put('/api/springboot/route/likes', {}, {
-          params: {
-            id: data.id,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLikes(likes + 1)
+        await axios.put(
+          '/api/springboot/route/likes',
+          {},
+          {
+            params: {
+              id: data.id,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLikes(likes + 1);
       }
       setIsLiked(newIsLiked);
     } catch (error) {
@@ -182,7 +189,7 @@ export default function PostCard({
         if (onDelete) {
           onDelete(data.id);
         }
-      } catch (error) { }
+      } catch (error) {}
     }
   };
   const handledetail = () => {
@@ -292,8 +299,8 @@ export default function PostCard({
                 ? showFullContent
                   ? data.content
                   : isContentLong
-                    ? `${data.content.slice(0, 150)}...`
-                    : data.content.slice(0, 150)
+                  ? `${data.content.slice(0, 150)}...`
+                  : data.content.slice(0, 150)
                 : '',
             }}
           />

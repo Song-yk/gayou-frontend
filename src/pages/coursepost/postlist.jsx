@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
-import PostCard from '../../components/common/PostCard';
-import defaultProfile from '../../assets/images/defaultProfile.png';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import CircularProgress from '@mui/material/CircularProgress';
-import Avatar from '@mui/material/Avatar';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import defaultProfile from '../../assets/images/defaultProfile.png';
+import PostCard from '../../components/common/PostCard';
+import MyButton from '../../components/common/MyButton';
 
 const Postlist = () => {
-  const [myData, setMyData] = useState();
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
+  const [myData, setMyData] = useState();
+  const { control } = useForm({});
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const areas = ['유성구', '대덕구', '서구', '중구', '동구'];
   const tags = [
     '빵지순례',
@@ -36,23 +39,24 @@ const Postlist = () => {
   ];
   const [selectedAreas, setSelectedAreas] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const toggleAreaSelection = (name) => {
-    setSelectedAreas((prevSelected) => {
+
+  const toggleAreaSelection = name => {
+    setSelectedAreas(prevSelected => {
       if (prevSelected.includes(name)) {
-        return prevSelected.filter((area) => area !== name);
+        return prevSelected.filter(area => area !== name);
       } else {
         return [...prevSelected, name];
       }
     });
   };
 
-  const toggleTagSelection = (name) => {
-    setSelectedTags((prevSelected) => {
+  const toggleTagSelection = name => {
+    setSelectedTags(prevSelected => {
       const updatedSelection = prevSelected.includes(name)
-        ? prevSelected.filter((tag) => tag !== name)
+        ? prevSelected.filter(tag => tag !== name)
         : [...prevSelected, name];
 
-      console.log("Updated selected tags: ", updatedSelection);
+      console.log('Updated selected tags: ', updatedSelection);
       return updatedSelection;
     });
   };
@@ -64,8 +68,6 @@ const Postlist = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
-
-      } catch (error) {
       } finally {
         setLoading(false);
       }
@@ -73,11 +75,13 @@ const Postlist = () => {
 
     fetchData();
   }, [searchParams]);
+
   const filteredData = (myData || []).filter(post => {
     const areaMatch = selectedAreas.length === 0 || selectedAreas.includes(post.town);
     const tagMatch = selectedTags.length === 0 || post.tag.some(tag => selectedTags.includes(tag));
     return areaMatch && tagMatch;
   });
+
   return (
     <Box className="home" sx={{ padding: '20px' }}>
       {loading ? (
@@ -87,26 +91,41 @@ const Postlist = () => {
           <Grid item xs={12} md={8}>
             <Box mt={5} sx={{ display: 'grid', gridTemplateColumns: '1fr 275px', gap: '5px' }}>
               <Box sx={{ border: 'solid 1px #aaa', borderRadius: '15px', padding: '1em', height: 'fit-content' }}>
-                {filteredData.map((data, index) => (
-                  <Box key={index} sx={{ borderBottom: 'solid 1px #ddd', marginBottom: '1em' }}>
-                    <Box display="flex" alignItems="center" mb={3}>
-                      <Avatar
-                        src={data.userId.profilePicture || defaultProfile}
-                        alt="profile"
-                        sx={{ width: 35, height: 35 }}
-                        onError={e => {
-                          e.target.src = defaultProfile;
-                        }}
-                      />
-                      <Typography variant="body1" ml={1}>
-                        {data.userId.name}
-                      </Typography>
+                {filteredData.length != 0 ? (
+                  filteredData.map((data, index) => (
+                    <Box key={index} sx={{ borderBottom: 'solid 1px #ddd', marginBottom: '1em' }}>
+                      <Box display="flex" alignItems="center" mb={3}>
+                        <Avatar
+                          src={data.userId.profilePicture || defaultProfile}
+                          alt="profile"
+                          sx={{ width: 35, height: 35 }}
+                          onError={e => {
+                            e.target.src = defaultProfile;
+                          }}
+                        />
+                        <Typography variant="body1" ml={1}>
+                          {data.userId.name}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <PostCard data={data} cumBorder="none" cumBoxShadow="none" flag={false} />
+                      </Box>
                     </Box>
-                    <Box>
-                      <PostCard data={data} cumBorder="none" cumBoxShadow="none" flag={false} />
-                    </Box>
+                  ))
+                ) : (
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Box sx={{ fontSize: '3em' }}>선택한 카테고리의 게시물이 없어요.</Box>
+                    <Box sx={{ fontSize: '1.5em' }}>첫 게시물이 되어보세요!</Box>
+                    <MyButton
+                      control={control}
+                      name="newRecommend"
+                      onClick={() => navigate('/region')}
+                      value="첫 게시물 작성하러 가기"
+                      width="fit-content"
+                      color="rosePink"
+                    />
                   </Box>
-                ))}
+                )}
               </Box>
               <Box sx={{ marginLeft: '10px' }}>
                 <Typography variant="h5" component="p" className="fw-bold mt-4">
@@ -131,25 +150,24 @@ const Postlist = () => {
           </Grid>
         </Grid>
       ) : (
-        <Typography variant="body1">No data found</Typography> // 데이터가 없을 때 메시지 표시
+        <Typography variant="body1">No data found</Typography>
       )}
     </Box>
   );
 };
 
 function Options({ named, onToggleSelection }) {
-  const [cl, setCl] = useState('transparent'); // 배경색 상태
-  const [tx, setTx] = useState('black'); // 글자색 상태
+  const [cl, setCl] = useState('transparent');
+  const [tx, setTx] = useState('black');
 
   const changeCl = () => {
     if (cl === 'transparent') {
-      setCl('#EA515B'); // 선택 시 배경색 변경
-      setTx('white'); // 선택 시 글자색 변경
+      setCl('#EA515B');
+      setTx('white');
     } else {
-      setCl('transparent'); // 선택 해제 시 배경색 초기화
-      setTx('black'); // 선택 해제 시 글자색 초기화
+      setCl('transparent');
+      setTx('black');
     }
-    // 부모 컴포넌트에서 선택 토글
     onToggleSelection(named);
   };
 
