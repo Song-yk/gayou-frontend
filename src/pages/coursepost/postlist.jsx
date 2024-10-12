@@ -66,7 +66,7 @@ const Postlist = () => {
 
     fetchData();
   }, [searchParams]);
-  const filteredData = myData.filter(post => {
+  const filteredData = (myData || []).filter(post => {
     return selectedOptions.length === 0 || post.tag.some(tag => selectedOptions.includes(tag));
   });
   return (
