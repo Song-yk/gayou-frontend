@@ -35,7 +35,6 @@ const Postlist = () => {
     '반려동물',
     '아이',
   ];
-
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -44,7 +43,8 @@ const Postlist = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
-        console.log(response.data)
+        console.log(response.data);
+        console.log(response.data[0].tag);
       } catch (error) {
       } finally {
         setLoading(false);

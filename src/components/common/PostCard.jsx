@@ -86,6 +86,7 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
+
       } else {
         await axios.post(
           '/api/springboot/route/bookmark',
@@ -118,6 +119,14 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
+        await axios.put('/api/springboot/route/like', {}, {
+          params: {
+            id: data.id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } else {
         await axios.post(
           '/api/springboot/route/like',
@@ -131,6 +140,14 @@ export default function PostCard({
             },
           }
         );
+        await axios.put('/api/springboot/route/likes', {}, {
+          params: {
+            id: data.id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       setIsLiked(newIsLiked);
     } catch (error) {
@@ -164,13 +181,15 @@ export default function PostCard({
         if (onDelete) {
           onDelete(data.id);
         }
-      } catch (error) {}
+      } catch (error) { }
     }
   };
   const handledetail = () => {
     navigate('/viewpost', { state: { id: data.id, flag: flag } });
   };
-
+  console.log(data, '데이터')
+  console.log(data.tag, '데이터태그')
+  console.log(data, '데이터')
   return (
     <Card
       sx={{
@@ -275,8 +294,8 @@ export default function PostCard({
                 ? showFullContent
                   ? data.content
                   : isContentLong
-                  ? `${data.content.slice(0, 150)}...`
-                  : data.content.slice(0, 150)
+                    ? `${data.content.slice(0, 150)}...`
+                    : data.content.slice(0, 150)
                 : '',
             }}
           />
@@ -298,7 +317,7 @@ export default function PostCard({
                   <IconButton onClick={toggleLike}>
                     {isLiked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
                   </IconButton>
-                  {/* <Typography>{likes}</Typography> */}
+                  <Typography>{likes}</Typography>
                   {!flag && (
                     <IconButton onClick={toggleBookmark}>
                       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
