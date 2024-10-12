@@ -16,37 +16,44 @@ const Postlist = () => {
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const areas = ['전체', '유성구', '대덕구', '서구', '중구', '동구'];
+  const areas = ['유성구', '대덕구', '서구', '중구', '동구'];
   const tags = [
+    '빵지순례',
+    '지역축제',
+    '예술/공연',
     '자연',
+    '스포츠',
+    '로컬 맛집',
+    '동네 탐험',
+    '감성 카페',
+    '아이/반려동물',
+    '쇼핑',
     '관광지',
     '문화시설',
-    '스포츠',
     '역사',
     '체험',
     '음식',
-    '카페',
-    '쇼핑',
-    '빵지순례',
-    '로컬 맛집',
-    '지역축제',
-    '예술/공연',
-    '동네탐험',
-    '반려동물',
-    '아이',
   ];
-  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션 배열 상태
-  const toggleSelection = (name) => {
-    setSelectedOptions((prevSelected) => {
+  const [selectedAreas, setSelectedAreas] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const toggleAreaSelection = (name) => {
+    setSelectedAreas((prevSelected) => {
       if (prevSelected.includes(name)) {
-        // 이미 선택된 경우, 배열에서 제거
-        const updatedSelection = prevSelected.filter((option) => option !== name);
-        return updatedSelection;
+        return prevSelected.filter((area) => area !== name);
       } else {
-        // 선택되지 않은 경우, 배열에 추가
-        const updatedSelection = [...prevSelected, name];
-        return updatedSelection;
+        return [...prevSelected, name];
       }
+    });
+  };
+
+  const toggleTagSelection = (name) => {
+    setSelectedTags((prevSelected) => {
+      const updatedSelection = prevSelected.includes(name)
+        ? prevSelected.filter((tag) => tag !== name)
+        : [...prevSelected, name];
+
+      console.log("Updated selected tags: ", updatedSelection);
+      return updatedSelection;
     });
   };
   useEffect(() => {
@@ -67,7 +74,9 @@ const Postlist = () => {
     fetchData();
   }, [searchParams]);
   const filteredData = (myData || []).filter(post => {
-    return selectedOptions.length === 0 || post.tag.some(tag => selectedOptions.includes(tag));
+    const areaMatch = selectedAreas.length === 0 || selectedAreas.includes(post.town);
+    const tagMatch = selectedTags.length === 0 || post.tag.some(tag => selectedTags.includes(tag));
+    return areaMatch && tagMatch;
   });
   return (
     <Box className="home" sx={{ padding: '20px' }}>
@@ -107,13 +116,13 @@ const Postlist = () => {
                 <Box mt={2}>
                   <Box display="flex" justifyContent="center" flexWrap="wrap">
                     {areas.map(area => (
-                      <Options key={area} named={area} onToggleSelection={toggleSelection} />
+                      <Options key={area} named={area} onToggleSelection={toggleAreaSelection} />
                     ))}
                   </Box>
                   <Divider sx={{ marginY: '10px' }} />
                   <Box display="flex" justifyContent="center" flexWrap="wrap">
                     {tags.map(tag => (
-                      <Options key={tag} named={tag} onToggleSelection={toggleSelection} />
+                      <Options key={tag} named={tag} onToggleSelection={toggleTagSelection} />
                     ))}
                   </Box>
                 </Box>
