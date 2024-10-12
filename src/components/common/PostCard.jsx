@@ -187,9 +187,6 @@ export default function PostCard({
   const handledetail = () => {
     navigate('/viewpost', { state: { id: data.id, flag: flag } });
   };
-  console.log(data, '데이터')
-  console.log(data.tag, '데이터태그')
-  console.log(data, '데이터')
   return (
     <Card
       sx={{
