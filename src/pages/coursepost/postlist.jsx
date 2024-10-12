@@ -35,7 +35,20 @@ const Postlist = () => {
     '반려동물',
     '아이',
   ];
-
+  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션 배열 상태
+  const toggleSelection = (name) => {
+    setSelectedOptions((prevSelected) => {
+      if (prevSelected.includes(name)) {
+        // 이미 선택된 경우, 배열에서 제거
+        const updatedSelection = prevSelected.filter((option) => option !== name);
+        return updatedSelection;
+      } else {
+        // 선택되지 않은 경우, 배열에 추가
+        const updatedSelection = [...prevSelected, name];
+        return updatedSelection;
+      }
+    });
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -44,7 +57,7 @@ const Postlist = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMyData(response.data);
-        console.log(response.data)
+
       } catch (error) {
       } finally {
         setLoading(false);
@@ -53,7 +66,9 @@ const Postlist = () => {
 
     fetchData();
   }, [searchParams]);
-
+  const filteredData = (myData || []).filter(post => {
+    return selectedOptions.length === 0 || post.tag.some(tag => selectedOptions.includes(tag));
+  });
   return (
     <Box className="home" sx={{ padding: '20px' }}>
       {loading ? (
@@ -63,7 +78,7 @@ const Postlist = () => {
           <Grid item xs={12} md={8}>
             <Box mt={5} sx={{ display: 'grid', gridTemplateColumns: '1fr 275px', gap: '5px' }}>
               <Box sx={{ border: 'solid 1px #aaa', borderRadius: '15px', padding: '1em', height: 'fit-content' }}>
-                {myData.map((data, index) => (
+                {filteredData.map((data, index) => (
                   <Box key={index} sx={{ borderBottom: 'solid 1px #ddd', marginBottom: '1em' }}>
                     <Box display="flex" alignItems="center" mb={3}>
                       <Avatar
@@ -92,13 +107,13 @@ const Postlist = () => {
                 <Box mt={2}>
                   <Box display="flex" justifyContent="center" flexWrap="wrap">
                     {areas.map(area => (
-                      <Options key={area} named={area} />
+                      <Options key={area} named={area} onToggleSelection={toggleSelection} />
                     ))}
                   </Box>
                   <Divider sx={{ marginY: '10px' }} />
                   <Box display="flex" justifyContent="center" flexWrap="wrap">
                     {tags.map(tag => (
-                      <Options key={tag} named={tag} />
+                      <Options key={tag} named={tag} onToggleSelection={toggleSelection} />
                     ))}
                   </Box>
                 </Box>
@@ -113,19 +128,21 @@ const Postlist = () => {
   );
 };
 
-function Options({ named }) {
-  const [cl, setCl] = useState('transparent');
-  const [tx, setTx] = useState('black');
+function Options({ named, onToggleSelection }) {
+  const [cl, setCl] = useState('transparent'); // 배경색 상태
+  const [tx, setTx] = useState('black'); // 글자색 상태
 
-  function changeCl() {
+  const changeCl = () => {
     if (cl === 'transparent') {
-      setCl('#EA515B');
-      setTx('white');
+      setCl('#EA515B'); // 선택 시 배경색 변경
+      setTx('white'); // 선택 시 글자색 변경
     } else {
-      setCl('transparent');
-      setTx('black');
+      setCl('transparent'); // 선택 해제 시 배경색 초기화
+      setTx('black'); // 선택 해제 시 글자색 초기화
     }
-  }
+    // 부모 컴포넌트에서 선택 토글
+    onToggleSelection(named);
+  };
 
   return (
     <Button
