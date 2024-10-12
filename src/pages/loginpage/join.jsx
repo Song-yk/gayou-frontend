@@ -1,25 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import Switch from '@mui/material/Switch';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-import Switch from '@mui/material/Switch';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
-import './profile.css';
 import { Box } from '@mui/material';
 import 'react-datepicker/dist/react-datepicker.css';
-import MyInput from '../../components/common/MyInput';
-import MyButton from '../../components/common/MyButton';
 import defaultProfileImage from '../../assets/images/defaultProfile.png';
+import MyButton from '../../components/common/MyButton';
+import MyInput from '../../components/common/MyInput';
+
 function Join() {
   const [showAuthNumberField, setShowAuthNumberField] = useState(false);
-  const [timer, setTimer] = useState(300);
-  const [remainingTime, setRemainingTime] = useState(timer);
+  const [remainingTime, setRemainingTime] = useState(300);
   const [sentAuthNumber, setSentAuthNumber] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
-  const [gender, setGender] = useState('male');
+  const [isGender, setIsGender] = useState(true);
   const [isLocal, setIsLocal] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const defaultValues = {
@@ -28,6 +27,9 @@ function Join() {
     email: '',
     phoneNumber: '',
     birthday: '',
+    isGender: true,
+    isLocal: false,
+    profilePicture: '',
   };
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -61,6 +63,9 @@ function Join() {
         ...data,
         birthday: formattedBirthday,
         password: hashedPassword,
+        isGender: isGender,
+        isLocal: isLocal,
+        profilePicture: profilePicture,
       };
 
       const res = await axios.post('/api/springboot/auth/register', submissionData);
@@ -117,6 +122,7 @@ function Join() {
       }
     }
   };
+
   const handleImageUpload = e => {
     const file = e.target.files[0];
     if (file) {
@@ -127,6 +133,7 @@ function Join() {
       reader.readAsDataURL(file);
     }
   };
+
   const verifyAuthNumber = () => {
     const userEnteredNumber = getValues('authenticationNumber');
     if (parseInt(userEnteredNumber) === parseInt(sentAuthNumber)) {
@@ -158,10 +165,32 @@ function Join() {
     <Box>
       <h3>회원 가입</h3>
       <p>회원가입을 위한 정보를 입력해주세요.</p>
-      <div className="profile-picture-section">
-        <div className="profile-picture">
-          <img src={profilePicture || defaultProfileImage} alt="Profile" className="profile-image" />
-        </div>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <img
+            src={profilePicture || defaultProfileImage}
+            alt="Profile"
+            className="profile-image"
+            width="70px"
+            height="70px"
+          />
+        </Box>
         <input
           type="file"
           id="fileInput"
@@ -177,20 +206,20 @@ function Join() {
         >
           사진 업로드
         </label>
-      </div>
+      </Box>
       <form onSubmit={handleSubmit(submission)}>
         <Box>
           <Box>
             <MyInput
               type="text"
-              label="이름"
+              label="닉네임"
               name="name"
               control={control}
               rules={{
-                required: '이름은 필수 항목입니다.',
+                required: '닉네임은 필수 항목입니다.',
                 minLength: {
                   value: 2,
-                  message: '이름은 최소 2자 이상이어야 합니다.',
+                  message: '닉네임은 최소 2자 이상이어야 합니다.',
                 },
               }}
             />
@@ -290,10 +319,11 @@ function Join() {
 
         <Box>
           <MyInput
-            type="text"
+            type="number"
             label="전화번호"
             name="phoneNumber"
             control={control}
+            maxLength="11"
             rules={{
               pattern: {
                 value: /^[0-9]{10,11}$/,
@@ -310,6 +340,7 @@ function Join() {
             place="생년월일 6자리"
             name="birthday"
             control={control}
+            maxLength="6"
             rules={{
               pattern: {
                 value: /^[0-9]{6}$/,
@@ -318,60 +349,66 @@ function Join() {
             }}
           />
         </Box>
-
-
-        <div className="form-group gender-location" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="gender w-50">
-            <label style={{ display: 'block', textAlign: 'left' }}>성별</label>
-            <div className="gender-options" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label htmlFor="male" style={{ width: '40px' }}>
-                남성
-              </label>
-              <input
+        <Box>
+          <Box sx={{ textAlign: 'left' }}>성별</Box>
+          <Box
+            sx={{
+              borderRadius: '10px',
+              border: '1px solid #ccc',
+              padding: '0.2em',
+            }}
+          >
+            {['남성', '여성'].map((label, index) => (
+              <MyInput
+                key={index}
                 type="radio"
-                id="male"
+                label={label}
+                id={label}
                 name="gender"
-                value="male"
-                checked={gender === 'male'}
-                style={{ width: '10px' }}
-                onChange={e => setGender(e.target.value)}
+                tagName="gender"
+                checked={isGender === (label === '남성')}
+                control={control}
+                onClick={() => setIsGender(label === '남성')}
+                border="none"
+                width="5em"
+                labelTextAlign="center"
               />
-              <label htmlFor="female" style={{ width: '40px', marginLeft: '0' }}>
-                여성
-              </label>
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="female"
-                checked={gender === 'female'}
-                style={{ width: '10px' }}
-                onChange={e => setGender(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="location w-50">
-            <div>
-              <label>대전거주하세요?</label>
-              <label className="switch">
-
-                <Switch {...label} checked={isLocal} onChange={() => setIsLocal(!isLocal)} />
-              </label>
-              <span>{isLocal ? '예' : '아니요'}</span>
-            </div>
-          </div>
+            ))}
+          </Box>
+        </Box>
+        <Box sx={{ marginY: '1.5em' }}>
+          <Box sx={{ textAlign: 'left' }}>
+            대전거주하세요?
+            <label className="switch">
+              <Switch {...label} checked={isLocal} onChange={() => setIsLocal(!isLocal)} />
+            </label>
+            <span>{isLocal ? '예' : '아니요'}</span>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <MyButton
-            name=""
+            name="prev"
+            color="sunsetOrange"
+            control={control}
+            value="이전"
+            borderRadius="5px"
+            margin="0px"
+            width="10%"
+            onClick={() => {
+              navigate(-1);
+            }}
+          />
+          <MyButton
+            name="submit"
             color="sunsetOrange"
             control={control}
             value="가입하기"
             borderRadius="5px"
             margin="0px"
-            width="50%"
+            width="fit-content"
             onClick={handleSubmit(submission)}
           />
-        </div>
+        </Box>
       </form>
     </Box>
   );

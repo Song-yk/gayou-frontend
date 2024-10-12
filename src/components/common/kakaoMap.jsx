@@ -1,8 +1,7 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { Controller } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Box } from '@mui/material';
+import { useCallback, useEffect, useRef } from 'react';
+import { Controller } from 'react-hook-form';
 
 function KakaoMap(props) {
   const { kakao } = window;
@@ -161,7 +160,7 @@ function KakaoMap(props) {
       control={props.control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className="map_wrap">
-          <div ref={mapRef} id="map" style={{ width: props.width || '100%', height: props.height || '670px' }}></div>
+          <div ref={mapRef} id="map" style={{ width: props.width || '100%', height: props.height || '640px' }}></div>
           <div className="custom_typecontrol radius_border">
             <span id="btnRoadmap" className="selected_btn" onClick={() => setMapType('roadmap')}>
               지도

@@ -20,7 +20,7 @@ import KakaoMap from '../../components/common/kakaoMap.jsx';
 import MyButton from '../../components/common/MyButton.jsx';
 import MyCardControls from '../../components/common/MyCardControls.jsx';
 
-const AnimatedGridItem = styled(Grid)(({ theme }) => ({
+const AnimatedGridItem = styled(Grid)(() => ({
   transition: 'all 0.2s ease',
 }));
 
@@ -32,7 +32,6 @@ const RouteCreator = () => {
   const [myData, setMyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [places, setPlaces] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [totItems, setTotItems] = useState();
@@ -47,11 +46,12 @@ const RouteCreator = () => {
     neighborhoods: neighborhoods,
     selectedConcepts: selectedConcepts,
     page: 1,
-    rec: 1,
+    rec: 0,
   });
-
+  console.log(myData);
   const fetchData = async (url, options = {}) => {
     try {
+      setParams({ ...params, rec: params.rec + 1 });
       const response = await axios.get(url, { params, ...options });
       return response.data;
     } catch (error) {
@@ -243,7 +243,6 @@ const RouteCreator = () => {
   };
 
   const retryRecommendation = async () => {
-    setParams({ ...params, rec: params.rec + 1 });
     setLoading(true);
     try {
       const data = await fetchData('/api/flask/route/locations/');
@@ -297,10 +296,7 @@ const RouteCreator = () => {
                   }}
                   endAdornment={
                     <InputAdornment position="start">
-                      <SearchIcon
-                        sx={{ cursor: 'pointer' }}
-                        onClick={handleSearch} // 검색 버튼 클릭 시 검색 요청
-                      />
+                      <SearchIcon sx={{ cursor: 'pointer' }} onClick={handleSearch} />
                     </InputAdornment>
                   }
                   sx={{
@@ -361,7 +357,6 @@ const RouteCreator = () => {
   };
   return (
     <div style={{ textAlign: '-webkit-center', marginBottom: '2em' }}>
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       {loading ? (
         <div>
           <h1 className="main-title fw-bold">
@@ -371,9 +366,16 @@ const RouteCreator = () => {
         </div>
       ) : myData.data.length > 0 ? (
         <Box sx={{ width: '80%' }}>
-          <Grid container spacing={3}>
+          <Grid container spacing={2} sx={{ marginTop: '0px !important' }}>
             <AnimatedGridItem item xs={12}>
-              <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
+              {myData.town ? (
+                <h1 style={{ textAlign: 'left' }}>오늘의 동네는 {myData.town}입니다.</h1>
+              ) : (
+                <h1 style={{ textAlign: 'left' }}>오늘의 동네입니다.</h1>
+              )}
+              {/* <h6 style={{ width: 'fit-content', float: 'right', marginBottom: '-1em', color: '#aaa' }}>
+                * AI 추천 경로는 때때로 부정확할 수 있습니다.
+              </h6> */}
             </AnimatedGridItem>
             <AnimatedGridItem item xs>
               <Box
@@ -382,7 +384,7 @@ const RouteCreator = () => {
                   borderRadius: '20px 10px 10px 20px',
                   padding: '1em',
                   borderColor: '#a6a6a6',
-                  height: '620px',
+                  height: '590px',
                   overflow: 'auto',
                   '&::-webkit-scrollbar': {
                     width: '10px',
@@ -411,22 +413,12 @@ const RouteCreator = () => {
               </Box>
             </AnimatedGridItem>
 
-            {/* 지도는 항상 표시 */}
-            <AnimatedGridItem
-              item
-              style={{ paddingTop: 0, marginTop: '24px' }}
-              xs={12}
-              sm={12}
-              md={12}
-              lg={5}
-              xl={7}
-              xxl={7}
-            >
+            <AnimatedGridItem item style={{ paddingTop: 0, marginTop: '18px' }} xs={12} sm={12} md={12} lg={5} xl={6}>
               <KakaoMap name="location" control={control} center={myData.data} editModeData={renderEditMode()} />
             </AnimatedGridItem>
 
             <AnimatedGridItem item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '-1em' }}>
                 <Box sx={{ textAlign: 'left' }}>
                   <MyButton
                     width="10%"
@@ -453,7 +445,7 @@ const RouteCreator = () => {
                     color="sunsetOrange"
                     value="다시 추천 받기"
                     onClick={retryRecommendation}
-                    sx={{ marginLeft: '1em' }} // Optional: to add spacing between the buttons
+                    sx={{ marginLeft: '1em' }}
                   />
                 </Box>
               </Box>

@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Box } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import MyButton from '../../components/common/MyButton';
 import './agree.css';
 
 function Agree() {
@@ -14,6 +17,8 @@ function Agree() {
   const ageRef = useRef(null);
   const privacyRef = useRef(null);
   const termsRef = useRef(null);
+
+  const { control } = useForm({});
 
   useEffect(() => {
     setIsAllChecked(isAgeChecked && isPrivacyChecked && isTermsChecked);
@@ -97,9 +102,30 @@ function Agree() {
           </div>
         )}
 
-        <button type="submit" className="submit-button">
-          다음
-        </button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <MyButton
+            name="prev"
+            color="sunsetOrange"
+            control={control}
+            value="이전"
+            borderRadius="5px"
+            margin="0px"
+            width="10%"
+            onClick={() => {
+              navigate(-1);
+            }}
+          />
+          <MyButton
+            type="submit"
+            name="prev"
+            color="sunsetOrange"
+            control={control}
+            value="다음"
+            borderRadius="5px"
+            margin="0px"
+            width="10%"
+          />
+        </Box>
       </form>
     </div>
   );
