@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Container, Row, Col, Form } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Extra = () => {
   const location = useLocation();
@@ -13,14 +14,43 @@ const Extra = () => {
   const [travelDate, setTravelDate] = useState(new Date());
   const [isLocal, setIsLocal] = useState(false);
   const { region, neighborhoods } = location.state || {};
+  const token = localStorage.getItem('token');
 
   const handleNextClick = () => {
     navigate('/concept', { state: { region, neighborhoods, age, gender, travelDate, isLocal } });
   };
 
-  const handleBeforeClick = () => {
-    navigate(-1);
+  const calculateAge = birthdayString => {
+    const birthDate = new Date(birthdayString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   };
+
+  useEffect(() => {
+    if (token) {
+      const fetchProfileData = async () => {
+        try {
+          const response = await axios.get(`/api/springboot/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = response.data;
+          setAge(calculateAge(data.birthday));
+          setGender(data.isGender ? '남성' : '여성');
+          setIsLocal(data.isLocal);
+          console.log(data);
+        } catch (error) {
+          console.error('Failed to fetch profile data:', error);
+        }
+      };
+
+      fetchProfileData();
+    }
+  }, [token]);
   return (
     <div className="options h-100 d-flex flex-column justify-content-start">
       <Container>
@@ -32,7 +62,6 @@ const Extra = () => {
             </h1>
           </Col>
           <Col md={7} className="d-flex flex-column align-items-left mt-5">
-            {/* 나이 체크 바와 성별 선택 */}
             <Row className="mb-4">
               <Col md={6}>
                 <div className="mb-4">
@@ -93,7 +122,6 @@ const Extra = () => {
           </Col>
         </Row>
 
-        {/* 이전/다음 버튼을 좌측 하단과 우측 하단에 고정 */}
         <Button
           className="fw-bold btn-lg m-5"
           style={{
@@ -105,7 +133,9 @@ const Extra = () => {
             border: '1px solid black',
             padding: '10px 40px',
           }}
-          onClick={handleBeforeClick}
+          onClick={() => {
+            navigate(-1);
+          }}
         >
           이전
         </Button>
