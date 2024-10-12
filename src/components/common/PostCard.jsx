@@ -31,7 +31,6 @@ export default function PostCard({
   const images = useMemo(() => data.data.map(item => item.contentid.firstimage), [data.data]);
   const isContentLong = data.content && data.content.length > 150;
   const token = localStorage.getItem('token');
-
   useEffect(() => {
     if (!flag) {
       setIsBookmarked(data.bookmark?.id || false);
@@ -127,6 +126,7 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
+        setLikes(likes - 1)
       } else {
         await axios.post(
           '/api/springboot/route/like',
@@ -148,6 +148,7 @@ export default function PostCard({
             Authorization: `Bearer ${token}`,
           },
         });
+        setLikes(likes + 1)
       }
       setIsLiked(newIsLiked);
     } catch (error) {
