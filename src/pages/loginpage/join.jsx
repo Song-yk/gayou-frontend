@@ -291,7 +291,7 @@ function Join() {
         <Box>
           <MyInput
             type="text"
-            label="전화번호"
+            label="* 전화번호"
             name="phoneNumber"
             control={control}
             rules={{
@@ -306,7 +306,7 @@ function Join() {
         <Box>
           <MyInput
             type="number"
-            label="생년월일"
+            label="* 생년월일"
             place="생년월일 6자리"
             name="birthday"
             control={control}
