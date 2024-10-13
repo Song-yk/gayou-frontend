@@ -47,15 +47,18 @@ function Join() {
     }
 
     try {
-      const birthday = data.birthday;
-      const year = birthday.substring(0, 2);
-      const month = birthday.substring(2, 4);
-      const day = birthday.substring(4, 6);
+      let formattedBirthday = new Date();
+      if (data.birthday) {
+        const birthday = data.birthday;
+        const year = birthday.substring(0, 2);
+        const month = birthday.substring(2, 4);
+        const day = birthday.substring(4, 6);
 
-      const currentYear = new Date().getFullYear();
-      const fullYear = year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
+        const currentYear = new Date().getFullYear();
+        const fullYear = year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
 
-      const formattedBirthday = `${fullYear}-${month}-${day}`;
+        formattedBirthday = `${fullYear}-${month}-${day}`;
+      }
 
       const hashedPassword = CryptoJS.SHA256(data.password).toString();
 
