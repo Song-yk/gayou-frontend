@@ -17,8 +17,7 @@ const PostForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const { id } = location.state || {};
-
+  const { id, selectedConcepts } = location.state || {};
   useEffect(() => {
     const fetchData = async () => {
       if (!id) {
@@ -66,6 +65,7 @@ const PostForm = () => {
   };
 
   const handleSubmit = async () => {
+
     if ((title || '').trim() === '') {
       setError('코스 이름은 필수 항목입니다.');
       return;
@@ -76,12 +76,11 @@ const PostForm = () => {
     }
 
     if (!confirm('저장 하시겠습니까?')) return;
-
     const token = localStorage.getItem('token');
     const updatedData = {
       id: id,
       courseName: title,
-      tag: tag,
+      tag: [...selectedConcepts, ...tag],
       content: content,
     };
 
