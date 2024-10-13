@@ -1,172 +1,299 @@
-import { useState, useEffect } from 'react';
-import './profile.css';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useForm } from 'react-hook-form';
 import defaultProfileImage from '../../assets/images/defaultProfile.png';
+import MyInput from '../../components/common/MyInput';
+import './profile.css';
 
 function Profile() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [birthday, setBirthday] = useState(new Date());
-  const [gender, setGender] = useState('male');
-  const [isLocal, setIsLocal] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [userData, setUserData] = useState({
+    name: '',
+    description: '',
+    email: '',
+    phoneNumber: '',
+    birthday: new Date(),
+    isGender: true,
+    isLocal: false,
+    profilePicture: null,
+  });
   const token = localStorage.getItem('token');
+  const { handleSubmit, control, reset } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      description: '',
+      phoneNumber: '',
+      birthday: '',
+      isGender: true,
+      isLocal: false,
+      profilePicture: null,
+    },
+  });
 
   useEffect(() => {
-    axios
-      .get(`api/springboot/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(response => {
-        const data = response.data;
-        setName(data.name || '');
-        setEmail(data.email || '');
-        setDescription(data.description || '');
-        setPhoneNumber(data.phoneNumber || '');
-        setBirthday(new Date(data.birthday));
-        setGender(data.gender || 'male');
-        setIsLocal(data.isLocal);
-        setProfilePicture(data.profilePicture || null);
-      })
-      .catch(error => { });
-  }, []);
+    const fetchProfileData = async () => {
+      if (token) {
+        try {
+          const response = await axios.get(`/api/springboot/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = response.data;
+          let formattedBirthday = '';
+          if (data.birthday) {
+            const date = new Date(data.birthday);
+            const year = String(date.getFullYear()).slice(2);
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            formattedBirthday = `${year}${month}${day}`;
+          }
+
+          setUserData({
+            name: data.name || '',
+            email: data.email || '',
+            description: data.description || '',
+            phoneNumber: data.phoneNumber || '',
+            birthday: formattedBirthday,
+            isGender: data.isGender ?? true,
+            isLocal: data.isLocal,
+            profilePicture: data.profilePicture || null,
+          });
+          reset({
+            name: data.name || '',
+            email: data.email || '',
+            description: data.description || '',
+            phoneNumber: data.phoneNumber || '',
+            birthday: formattedBirthday,
+            isGender: data.isGender ?? true,
+            isLocal: data.isLocal,
+            profilePicture: data.profilePicture || null,
+          });
+        } catch (error) {
+          console.error('Failed to fetch profile data:', error);
+        }
+      }
+    };
+
+    fetchProfileData();
+  }, [token]);
 
   const handleImageUpload = e => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfilePicture(reader.result);
+        setUserData(prev => ({ ...prev, profilePicture: reader.result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const updatedData = {
-      name,
-      email,
-      description,
-      phoneNumber,
-      birthday,
-      gender,
-      isLocal,
-      profilePicture,
-    };
-    axios
-      .post('/api/springboot/auth/profile/update', updatedData, { headers: { Authorization: `Bearer ${token}` } })
-      .then(response => {
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleGenderChange = isMale => {
+    setUserData(prev => ({ ...prev, isGender: isMale }));
+  };
+
+  const handleLocalChange = () => {
+    setUserData(prev => ({ ...prev, isLocal: !prev.isLocal }));
+  };
+
+  const submission = async data => {
+    if (window.confirm('변경하시겠습니까?')) {
+      try {
+        const birthday = data.birthday;
+        const year = birthday.substring(0, 2);
+        const month = birthday.substring(2, 4);
+        const day = birthday.substring(4, 6);
+
+        const currentYear = new Date().getFullYear();
+        const fullYear = year <= String(currentYear).substring(2) ? `20${year}` : `19${year}`;
+
+        const formattedBirthday = `${fullYear}-${month}-${day}`;
+
+        const submissionData = {
+          ...userData,
+          description: userData.description,
+          birthday: formattedBirthday,
+          name: data.name,
+          phoneNumber: data.phoneNumber,
+        };
+
+        await axios.post('/api/springboot/auth/profile/update', submissionData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         alert('변경되었습니다.');
-      })
-      .catch(error => { });
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+      }
+    }
   };
 
   return (
     <div className="profile-main-content">
-      <div className="profile-picture-section">
-        <div className="profile-picture">
-          <img src={profilePicture || defaultProfileImage} alt="Profile" className="profile-image" />
-        </div>
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="upload-button"
-          style={{ display: 'none' }}
-        />
-        <label
-          htmlFor="fileInput"
-          className="btn btn-lg btn-light"
-          style={{ border: '1px solid black', marginLeft: '20px' }}
-        >
-          사진 업로드
-        </label>
-      </div>
+      <ProfilePictureUploader profilePicture={userData.profilePicture} onImageUpload={handleImageUpload} />
 
-      <form className="profile-form" onSubmit={handleSubmit}>
+      <form className="profile-form" onSubmit={handleSubmit(submission)}>
         <div className="form-group">
-          <label htmlFor="name">닉네임</label>
-          <input type="text" id="name" maxLength="16" value={name} onChange={e => setName(e.target.value)} />
-          <small>한글 8자, 영문 및 숫자 16자까지 조합할 수 있어요.</small>
+          <MyInput
+            name="name"
+            label="닉네임"
+            control={control}
+            height="100px"
+            rules={{
+              required: '닉네임은 필수 항목입니다.',
+              minLength: {
+                value: 2,
+                message: '닉네임은 최소 2자 이상이어야 합니다.',
+              },
+            }}
+          />
         </div>
 
         <div className="form-group">
-          <label htmlFor="email">이메일</label>
-          <input type="email" id="email" value={email} disabled />
+          <MyInput
+            type="email"
+            label="이메일"
+            name="email"
+            control={control}
+            disabled={true}
+            rules={{
+              required: '이메일은 필수 항목입니다.',
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                message: '유효한 이메일 주소를 입력해 주세요.',
+              },
+            }}
+          />
         </div>
 
         <div className="form-group">
           <label htmlFor="description">소개</label>
           <textarea
             id="description"
+            name="description"
             rows="4"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
+            value={userData.description}
+            onChange={handleInputChange}
           ></textarea>
         </div>
 
         <div className="form-group">
-          <label htmlFor="phoneNumber">전화번호</label>
-          <input type="text" id="phoneNumber" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+          <MyInput
+            type="number"
+            label="전화번호"
+            name="phoneNumber"
+            control={control}
+            maxLength="11"
+            rules={{
+              pattern: {
+                value: /^[0-9]{10,11}$/,
+                message: '전화번호는 10~11자리 숫자만 입력 가능합니다.',
+              },
+            }}
+          />
         </div>
+        <MyInput
+          type="number"
+          label="생년월일"
+          place="생년월일 6자리"
+          name="birthday"
+          control={control}
+          maxLength="6"
+          rules={{
+            pattern: {
+              value: /^[0-9]{6}$/,
+              message: '생년월일은 6자리 입니다.',
+            },
+          }}
+        />
 
-        <div className="form-group">
-          <label htmlFor="birthday">생년월일</label>
-          <DatePicker selected={birthday} onChange={date => setBirthday(date)} dateFormat="yyyy-MM-dd" />
-        </div>
+        <GenderSelection isGender={userData.isGender} onGenderChange={handleGenderChange} />
+        <LocalCheckbox isLocal={userData.isLocal} onLocalChange={handleLocalChange} />
 
-        <div className="form-group gender-location">
-          <div className="gender w-50">
-            <label>성별</label>
-            <div className="gender-options">
-              <label htmlFor="male" style={{ width: '40px' }}>
-                남성
-              </label>
-              <input
-                type="radio"
-                id="male"
-                name="gender"
-                value="male"
-                checked={gender === 'male'}
-                style={{ width: '10px' }}
-                onChange={e => setGender(e.target.value)}
-              />
-              <label htmlFor="female" style={{ width: '40px', marginLeft: '30px' }}>
-                여성
-              </label>
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="female"
-                checked={gender === 'female'}
-                style={{ width: '10px' }}
-                onChange={e => setGender(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="location w-50">
-            <div className="location-options">
-              <label>대전거주하세요?</label>
-              <label className="switch">
-                <input type="checkbox" checked={isLocal} onChange={() => setIsLocal(!isLocal)} />
-                <span className="slider"></span>
-              </label>
-              <span>{isLocal ? '예' : '아니요'}</span>
-            </div>
-          </div>
-          <button type="submit" className="submit-button">
-            변경 완료
-          </button>
-        </div>
+        <button type="submit" className="submit-button">
+          변경 완료
+        </button>
       </form>
+    </div>
+  );
+}
+
+function ProfilePictureUploader({ profilePicture, onImageUpload }) {
+  return (
+    <div className="profile-picture-section">
+      <div className="profile-picture">
+        <img src={profilePicture || defaultProfileImage} alt="Profile" className="profile-image" />
+      </div>
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*"
+        onChange={onImageUpload}
+        className="upload-button"
+        style={{ display: 'none' }}
+      />
+      <label
+        htmlFor="fileInput"
+        className="btn btn-lg btn-light"
+        style={{ border: '1px solid black', marginLeft: '20px' }}
+      >
+        사진 업로드
+      </label>
+    </div>
+  );
+}
+
+function GenderSelection({ isGender, onGenderChange }) {
+  return (
+    <div className="form-group gender-location">
+      <div className="gender w-50">
+        <label>성별</label>
+        <div className="gender-options">
+          <label htmlFor="male" style={{ width: '40px' }}>
+            남성
+          </label>
+          <input
+            type="radio"
+            id="male"
+            name="gender"
+            value="1"
+            checked={isGender === true}
+            style={{ width: '10px' }}
+            onChange={() => onGenderChange(true)}
+          />
+          <label htmlFor="female" style={{ width: '40px', marginLeft: '30px' }}>
+            여성
+          </label>
+          <input
+            type="radio"
+            id="female"
+            name="gender"
+            value="0"
+            checked={isGender === false}
+            style={{ width: '10px' }}
+            onChange={() => onGenderChange(false)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LocalCheckbox({ isLocal, onLocalChange }) {
+  return (
+    <div className="location w-50">
+      <div className="location-options">
+        <label>대전거주하세요?</label>
+        <label className="switch">
+          <input type="checkbox" checked={isLocal} onChange={onLocalChange} />
+          <span className="slider"></span>
+        </label>
+        <span>{isLocal ? '예' : '아니요'}</span>
+      </div>
     </div>
   );
 }

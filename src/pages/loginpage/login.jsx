@@ -1,11 +1,12 @@
+import { Box, Grid, Link, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import axios from 'axios';
+import CryptoJS from 'crypto-js';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
-import CryptoJS from 'crypto-js';
-import { Typography, Link, Box, Grid } from '@mui/material';
-import MyInput from '../../components/common/MyInput';
 import MyButton from '../../components/common/MyButton';
+import MyInput from '../../components/common/MyInput';
 
 function Login() {
   const navigate = useNavigate();
@@ -135,18 +136,22 @@ function Login() {
           </Grid>
         </Grid>
       </Box>
-
-      <Link
-        href="/forgot-password"
-        style={{
-          display: 'block',
-          marginTop: '10px',
-          color: 'gray',
-          textDecoration: 'none',
-        }}
-      >
-        비밀번호 찾기
-      </Link>
+      <Box sx={{ textAlign: '-webkit-center' }}>
+        <Button
+          variant="text"
+          onClick={() => {
+            navigate(-1);
+          }}
+          sx={{
+            display: 'block',
+            marginTop: '10px',
+            color: 'gray',
+            textDecoration: 'none',
+          }}
+        >
+          뒤로가기
+        </Button>
+      </Box>
     </Box>
   );
 }
